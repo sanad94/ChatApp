@@ -51,7 +51,7 @@ public class SettingsFragment extends Fragment
     private Toolbar toolbar;
     private String myfullName;
     private TextView textInfo;
-    public static FABProgressCircle fabProgressCircle;
+    private  FABProgressCircle fabProgressCircle;
     private Intent imageServiceIntent;
 
     @Override

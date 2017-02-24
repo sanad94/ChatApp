@@ -27,7 +27,7 @@ public class ImageService extends IntentService
     private String myPhoneNumber;
     public static final String ACTION ="com.example.a2017.chatapp.services.imageService";
     private boolean isRunning = false;
-    private boolean checkRunning;
+    private boolean checkRunning = false;
 
     public ImageService()
     {
@@ -44,13 +44,17 @@ public class ImageService extends IntentService
     public void onStart(Intent intent, int startId)
     {
         super.onStart(intent, startId);
-        checkRunning = intent.getBooleanExtra("check", true);
-        if (checkRunning) {
+        checkRunning = intent.getExtras().getBoolean("check");
+        if (checkRunning)
+        {
             Intent intentValue = new Intent(ACTION);
 
-            if (!isRunning) {
+            if (!isRunning)
+            {
                 intentValue.putExtra("running", false);
-            } else {
+            }
+            else
+            {
                 intentValue.putExtra("running", true);
             }
             LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intentValue);
@@ -61,14 +65,18 @@ public class ImageService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        if(checkRunning)
+        try
         {
-            return;
+            imageUri = Uri.parse(intent.getStringExtra("imageUri"));
+            myPhoneNumber = intent.getStringExtra("myPhoneNumber");
+            convertImageTobytes(imageUri);
+            Log.d("onHandleIntent", "done");
         }
-        imageUri = Uri.parse(intent.getStringExtra("imageUri"));
-        myPhoneNumber = intent.getStringExtra("myPhoneNumber");
-        convertImageTobytes(imageUri);
-        Log.d("onHandleIntent","done");
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     public void convertImageTobytes(Uri uri)

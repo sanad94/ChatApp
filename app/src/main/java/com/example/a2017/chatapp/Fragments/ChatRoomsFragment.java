@@ -1,7 +1,6 @@
 package com.example.a2017.chatapp.Fragments;
 
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -21,20 +20,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.a2017.chatapp.Models.ChatRoom;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.ChatRoomsAdapter;
 import com.example.a2017.chatapp.RecyclerTools.ChatRoomsDividerItemDecoration;
-import com.example.a2017.chatapp.RecyclerTools.RecyclerTouchListner;
+import com.example.a2017.chatapp.RecyclerTools.ChatRoomsRecyclerTouchListner;
+import com.example.a2017.chatapp.RecyclerTools.IclickListner;
 import com.example.a2017.chatapp.Utils.Preferences;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 
@@ -127,7 +121,7 @@ public class ChatRoomsFragment extends Fragment
         recyclerView_chat_list.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView_chat_list.setItemAnimator(new DefaultItemAnimator());
         recyclerView_chat_list.addItemDecoration(new ChatRoomsDividerItemDecoration(getContext()));
-        recyclerView_chat_list.addOnItemTouchListener(new RecyclerTouchListner(getContext(), recyclerView_chat_list, new RecyclerTouchListner.IclickListner()
+        recyclerView_chat_list.addOnItemTouchListener(new ChatRoomsRecyclerTouchListner(getContext(), recyclerView_chat_list, new IclickListner()
         {
             @Override
             public  void onClick(View view, final int position)

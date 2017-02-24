@@ -38,7 +38,7 @@ public class Login extends AppCompatActivity
        if (isLogin)
         {
             goToNextActivity();
-            Preferences.setFirstRun(true,this);
+
         }
         else
         {
@@ -92,6 +92,7 @@ public class Login extends AppCompatActivity
                     Preferences.setMyPhoneNumber(myPhoneNumber,getBaseContext());
                     Preferences.setMyFullName(myfullName,getBaseContext());
                     Preferences.setLogin(true,getBaseContext());
+                    Preferences.setFirstRun(true,getBaseContext());
                     goToNextActivity();
                 }
                 else

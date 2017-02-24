@@ -46,7 +46,20 @@ public class MainActivity extends AppCompatActivity
         backStackFragment();
         setOnNavigationItemSelectedListener();
         setItemCheckedNavigationView();
+    }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Preferences.setisInbackground(true,this);
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        Preferences.setisInbackground(false,this);
     }
 
     private void backStackFragment()
@@ -54,7 +67,8 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0)
+                {
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true); // show back button
                     toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                         @Override
@@ -141,19 +155,5 @@ public class MainActivity extends AppCompatActivity
         int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
         int titleBarHeight= contentViewTop - statusBarHeight;
         return titleBarHeight;
-    }
-
-        @Override
-    protected void onPause()
-    {
-        super.onPause();
-        Preferences.setisInbackground(true,this);
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        Preferences.setisInbackground(false,this);
     }
 }

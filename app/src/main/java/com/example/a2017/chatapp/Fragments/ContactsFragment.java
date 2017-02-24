@@ -18,7 +18,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,10 +33,9 @@ import android.widget.Toast;
 
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.RecyclerAdapters.ContactsAdapter;
-import com.example.a2017.chatapp.RecyclerTools.ChatRoomsDividerItemDecoration;
 import com.example.a2017.chatapp.RecyclerTools.ContactsDividerItemDecoration;
 import com.example.a2017.chatapp.RecyclerTools.ContactsRecyclerTouchListner;
-import com.example.a2017.chatapp.RecyclerTools.RecyclerTouchListner;
+import com.example.a2017.chatapp.RecyclerTools.IclickListner;
 import com.example.a2017.chatapp.Services.ContactService;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.example.a2017.chatapp.R;
@@ -85,9 +83,15 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
         checkFirstRun();
         configureRecyclerView();
         configureRequestPermissions();
-        configureSwipeRefreshLayout();
         return view;
    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        configureSwipeRefreshLayout();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
@@ -132,7 +136,6 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
             @Override
             public boolean onQueryTextSubmit(String query)
             {
-
                 contactsAdapter.getFilter().filter(query);
                 return true;
             }
@@ -236,7 +239,7 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
         recyclerView_contact.setItemAnimator(new DefaultItemAnimator());
         recyclerView_contact.setAdapter(contactsAdapter);
         recyclerView_contact.addItemDecoration(new ContactsDividerItemDecoration(getContext()));
-        recyclerView_contact.addOnItemTouchListener(new ContactsRecyclerTouchListner(getContext(), recyclerView_contact, new ContactsRecyclerTouchListner.IclickListner()
+        recyclerView_contact.addOnItemTouchListener(new ContactsRecyclerTouchListner(getContext(), recyclerView_contact, new IclickListner()
         {
             @Override
             public void onClick(View view, int position)

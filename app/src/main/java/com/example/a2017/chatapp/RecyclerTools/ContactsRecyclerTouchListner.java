@@ -22,12 +22,6 @@ public class ContactsRecyclerTouchListner implements RecyclerView.OnItemTouchLis
     private boolean isRtl;
     private WindowManager windowManager;
 
-    public interface IclickListner
-    {
-        void onClick(View view, int position);
-        void onLongClick(View view, int position);
-    }
-
     public ContactsRecyclerTouchListner(final Context context, final RecyclerView recyclerView, final IclickListner clickListner)
     {
         this.context=context;

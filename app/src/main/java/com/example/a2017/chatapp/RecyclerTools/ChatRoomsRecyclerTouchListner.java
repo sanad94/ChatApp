@@ -16,7 +16,7 @@ import com.example.a2017.chatapp.R;
 /**
  * Created by 2017 on 04/02/2017.
  */
-public class RecyclerTouchListner implements RecyclerView.OnItemTouchListener
+public class ChatRoomsRecyclerTouchListner implements RecyclerView.OnItemTouchListener
 {
     private GestureDetector gestureDetector ;
     private IclickListner clickListner ;
@@ -25,13 +25,7 @@ public class RecyclerTouchListner implements RecyclerView.OnItemTouchListener
     private boolean isRtl;
     private WindowManager windowManager;
 
-    public interface IclickListner
-    {
-        void onClick(View view, int position);
-        void onLongClick(View view , int position);
-    }
-
-    public RecyclerTouchListner(final Context context, final RecyclerView recyclerView, final IclickListner clickListner)
+    public ChatRoomsRecyclerTouchListner(final Context context, final RecyclerView recyclerView, final IclickListner clickListner)
     {
         this.context=context;
         this.clickListner = clickListner ;
