@@ -1,0 +1,31 @@
+package com.example.a2017.chatapp.Application;
+
+import android.app.Application;
+
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.github.tamir7.contacts.Contacts;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
+/**
+ * Created by 2017 on 04/02/2017.
+ */
+public class MyApplication extends Application
+{
+    @Override
+    public void onCreate()
+    {
+        super.onCreate();
+        Fresco.initialize(this);
+        Contacts.initialize(this);
+        Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("chat.realm")
+                .schemaVersion(1)
+                .modules(Realm.getDefaultModule())
+                .build();
+        Realm.setDefaultConfiguration(config);
+    }
+
+}

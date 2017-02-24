@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <string name="text_settings">settings</string>
+    <string name="text_caht">chat</string>
+    <string name="text_contacts">contacts</string>
+    <string name="login_validation">This field can not be blank</string>
+    <string name="server_validation">we are sorry try again later</string>
+    <string name="deactivateAccount">Deactivate</string>
+    <string name="send">SEND</string>
+    <string name="phoneNumber">phone Number</string>
+    <string name="login">login</string>
+    <string name="full_name">full name</string>
+    <string name="action_search">search</string>
+</resources>
