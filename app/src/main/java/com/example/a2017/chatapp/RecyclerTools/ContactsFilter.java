@@ -18,15 +18,15 @@ import java.util.LinkedList;
 public  class ContactsFilter extends Filter
 {
     private ContactsAdapter adapter;
-    private LinkedList<MyContacts> originalList;
-    private  LinkedList<MyContacts> filteredList;
+    private ArrayList<MyContacts> originalList;
+    private  ArrayList<MyContacts> filteredList;
 
-    public ContactsFilter(ContactsAdapter adapter, LinkedList<MyContacts> originalList)
+    public ContactsFilter(ContactsAdapter adapter, ArrayList<MyContacts> originalList)
     {
         super();
         this.adapter = adapter;
-        this.originalList = new LinkedList<>(originalList);
-        this.filteredList = new LinkedList<>();
+        this.originalList = new ArrayList<>(originalList);
+        this.filteredList = new ArrayList<>();
     }
 
     @Override
@@ -43,15 +43,7 @@ public  class ContactsFilter extends Filter
         //http://stackoverflow.com/questions/30162431/filtering-realm-object-in-android
         // solve the issue for realm object access from other thread
         filteredList.clear();
-        boolean isDigitsOnly = TextUtils.isDigitsOnly(constraint);
-        if(isDigitsOnly)
-        {
-            filterListByPhoneNumber(constraint);
-        }
-        else
-        {
-            filterListByName(constraint);
-        }
+        filterListByName(constraint);
         adapter.setContacts(filteredList);
         adapter.notifyDataSetChanged();
     }
@@ -102,6 +94,11 @@ public  class ContactsFilter extends Filter
                     filteredList.add(contacts);
                 }
             }
+        }
+
+        if(filteredList.size()== 0)
+        {
+            filterListByPhoneNumber(constraint);
         }
     }
 }

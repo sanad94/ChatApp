@@ -4,9 +4,7 @@ import com.example.a2017.chatapp.Models.ImageByte;
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.Models.UserToken;
-
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -31,7 +29,7 @@ public interface ApiInterfaceRetrofit
     Call<MessageOverNetwork> sendMessage (@Body MessageOverNetwork mymessage);
 
     @POST("SendContactList")
-    Call<LinkedList<MyContacts>> sendContact (@Body LinkedList<MyContacts> myContact);
+    Call<ArrayList<MyContacts>> sendContact (@Body ArrayList<MyContacts> myContact);
 
     @GET("DeleteUser/{phoneNumber}")
     Call<Void> deactivateAccount (@Path("phoneNumber") String myPhoneNumber);

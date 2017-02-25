@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.a2017.chatapp.Models.ChatRoom;
 import com.example.a2017.chatapp.R;
@@ -51,6 +52,7 @@ public class ChatRoomsFragment extends Fragment
     private FragmentManager manager;
     private FragmentTransaction transaction;
     private ArrayList<ChatRoom> chatRoomList;
+    private ArrayList<ChatRoom> tempChatRoomList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
@@ -95,11 +97,24 @@ public class ChatRoomsFragment extends Fragment
 
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        configureSearchView(searchView);
+    }
+
+    private void configureSearchView(SearchView searchView)
+    {
+        searchView.setOnSearchClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                tempChatRoomList = chatRoomList;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
             @Override
             public boolean onQueryTextSubmit(String query)
             {
-
                 chatRoomsAdapter.getFilter().filter(query);
                 return true;
             }
@@ -108,10 +123,22 @@ public class ChatRoomsFragment extends Fragment
             public boolean onQueryTextChange(String newText)
             {
                 chatRoomsAdapter.getFilter().filter(newText);
+                chatRoomList = chatRoomsAdapter.getChatRooms();
                 return true;
             }
         });
-
+        searchView.setOnCloseListener(new SearchView.OnCloseListener()
+        {
+            @Override
+            public boolean onClose()
+            {
+                chatRoomList = tempChatRoomList;
+                chatRoomsAdapter.setChatRooms(chatRoomList);
+                chatRoomsAdapter.notifyDataSetChanged();
+                tempChatRoomList = null;
+                return false;
+            }
+        });
     }
 
     private void configureRecyclerView()

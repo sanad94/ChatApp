@@ -10,6 +10,8 @@ import com.example.a2017.chatapp.RetrofitApi.ApiInterfaceRetrofit;
 import com.github.tamir7.contacts.Contact;
 import com.github.tamir7.contacts.Contacts;
 import com.github.tamir7.contacts.Query;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ import retrofit2.Response;
 
 public class ContactService extends IntentService
 {
-    private LinkedList<MyContacts> myContacts;
+    private ArrayList<MyContacts> myContacts;
     private Realm realm;
     public static final String ACTION ="com.example.a2017.chatapp.services.contactService";
 
@@ -44,7 +46,7 @@ public class ContactService extends IntentService
     {
         Query q = Contacts.getQuery();
         List<Contact> contacts = q.find();
-        myContacts = new LinkedList<>();
+        myContacts = new ArrayList<>();
         for (Contact c : contacts)
         {
             MyContacts myContact ;
@@ -78,30 +80,30 @@ public class ContactService extends IntentService
         sendContactToserver(myContacts);
     }
 
-    private void sendContactToserver(final LinkedList<MyContacts> contacts)
+    private void sendContactToserver(final ArrayList<MyContacts> contacts)
     {
         ApiInterfaceRetrofit apiClient = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
-        Call<LinkedList<MyContacts>> contactList = apiClient.sendContact(contacts);
-        contactList.enqueue(new Callback<LinkedList<MyContacts>>() {
+        Call<ArrayList<MyContacts>> contactList = apiClient.sendContact(contacts);
+        contactList.enqueue(new Callback<ArrayList<MyContacts>>() {
             @Override
-            public void onResponse(Call<LinkedList<MyContacts>> call, Response<LinkedList<MyContacts>> response)
+            public void onResponse(Call<ArrayList<MyContacts>> call, Response<ArrayList<MyContacts>> response)
             {
                 if(response.code()==200 || response.code()==204)
                 {
-                    final LinkedList<MyContacts> contacts = response.body();
+                    final ArrayList<MyContacts> contacts = response.body();
                     addContactToRealm(contacts);
                 }
             }
 
             @Override
-            public void onFailure(Call<LinkedList<MyContacts>> call, Throwable t)
+            public void onFailure(Call<ArrayList<MyContacts>> call, Throwable t)
             {
-
+                sendIntentToFragment(false);
             }
         });
     }
 
-    private void addContactToRealm(final LinkedList<MyContacts> contacts)
+    private void addContactToRealm(final ArrayList<MyContacts> contacts)
     {
         realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction()
@@ -112,8 +114,13 @@ public class ContactService extends IntentService
                 realm.copyToRealmOrUpdate(contacts);
             }
         });
+        sendIntentToFragment(true);
+    }
+
+    private void sendIntentToFragment(boolean isDone)
+    {
         Intent intentValue = new Intent(ACTION);
-        intentValue.putExtra("done",true);
+        intentValue.putExtra("done",isDone);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intentValue);
     }
 }

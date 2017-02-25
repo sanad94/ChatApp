@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -81,6 +82,7 @@ public class MessagesFragment extends Fragment
         disableBottomNavigationView();
         sendButtonOnClick();
         configureRecyclerView();
+        setAdjustResize();
         return view;
     }
 
@@ -104,6 +106,7 @@ public class MessagesFragment extends Fragment
         super.onDestroy();
         enableBottomNavigationView();
         setToolbarTitleToAppName();
+        setAdjustPan();
     }
 
     private void configureRecyclerView()
@@ -269,6 +272,16 @@ public class MessagesFragment extends Fragment
     {
         String appName = getResources().getString(R.string.app_name);
       ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(appName);
+    }
+
+    private void setAdjustPan()
+    {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+    }
+
+    private void setAdjustResize()
+    {
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
 
 }

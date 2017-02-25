@@ -30,7 +30,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.RecyclerAdapters.ContactsAdapter;
 import com.example.a2017.chatapp.RecyclerTools.ContactsDividerItemDecoration;
@@ -39,10 +38,7 @@ import com.example.a2017.chatapp.RecyclerTools.IclickListner;
 import com.example.a2017.chatapp.Services.ContactService;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.example.a2017.chatapp.R;
-
-import java.util.LinkedList;
-
-
+import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -60,7 +56,8 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isFirstRun;
     private Realm realm;
-    private LinkedList<MyContacts> contactsList;
+    private ArrayList<MyContacts> contactsList;
+    private ArrayList<MyContacts> tempContactsList;
     private FragmentManager manager;
     private FragmentTransaction transaction;
 
@@ -132,7 +129,21 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        configureSearchView(searchView);
+    }
+
+    private void configureSearchView(SearchView searchView)
+    {
+        searchView.setOnSearchClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                tempContactsList = contactsList;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
             @Override
             public boolean onQueryTextSubmit(String query)
             {
@@ -144,10 +155,22 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
             public boolean onQueryTextChange(String newText)
             {
                 contactsAdapter.getFilter().filter(newText);
+                contactsList = contactsAdapter.getContacts();
                 return true;
             }
         });
-
+        searchView.setOnCloseListener(new SearchView.OnCloseListener()
+        {
+            @Override
+            public boolean onClose()
+            {
+                contactsList = tempContactsList;
+                contactsAdapter.setContacts(contactsList);
+                contactsAdapter.notifyDataSetChanged();
+                tempContactsList = null;
+                return false;
+            }
+        });
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver()
@@ -160,6 +183,11 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
             {
                 getFromRealm();
             }
+            else
+            {
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(getContext(),getResources().getText(R.string.internet_connection),Toast.LENGTH_SHORT).show();
+            }
         }
     };
 
@@ -167,9 +195,10 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
     {
         RealmQuery<MyContacts> query = realm.where(MyContacts.class);
         RealmResults<MyContacts> realmResults =query.findAll();
-        contactsList = new LinkedList<>(realmResults);
+        contactsList = new ArrayList<>(realmResults);
         contactsAdapter.setContacts(contactsList);
         contactsAdapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
     }
     private void configureRequestPermissions()
     {
@@ -209,7 +238,6 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
     private void configureSwipeRefreshLayout()
     {
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setRefreshing(true);
         swipeRefreshLayout.post(new Runnable()
         {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -229,12 +257,11 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
                 }
             }
         });
-        swipeRefreshLayout.setRefreshing(false);
     }
 
      private void configureRecyclerView()
     {
-        contactsAdapter = new ContactsAdapter(new LinkedList<MyContacts>());
+        contactsAdapter = new ContactsAdapter(new ArrayList<MyContacts>());
         recyclerView_contact.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView_contact.setItemAnimator(new DefaultItemAnimator());
         recyclerView_contact.setAdapter(contactsAdapter);
@@ -286,6 +313,5 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
         {
             lunchContactService();
         }
-        swipeRefreshLayout.setRefreshing(false);
     }
 }

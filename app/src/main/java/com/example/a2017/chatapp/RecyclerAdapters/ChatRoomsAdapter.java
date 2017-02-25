@@ -12,8 +12,10 @@ import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerTools.ChatRoomsFilter;
+import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
 import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.ArrayList;
+import java.util.HashMap;
 import io.realm.Realm;
 import io.realm.RealmList;
 
@@ -24,6 +26,7 @@ import io.realm.RealmList;
 public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder> implements Filterable
 {
     private ArrayList<ChatRoom> chatRooms;
+    private HashMap<String,ChatRoom> chatRoomMap;
     private Realm realm;
     private ChatRoomsFilter filter;
 
@@ -44,8 +47,9 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
 
     public ChatRoomsAdapter(ArrayList<ChatRoom> chatRooms)
      {
-         this.chatRooms=chatRooms;
-         realm=Realm.getDefaultInstance();
+         this.chatRooms = chatRooms;
+         this.chatRoomMap = new HashMap<>();
+         realm = Realm.getDefaultInstance();
      }
     @Override
     public ChatRoomsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -59,13 +63,13 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
     {
         int messageNotReaded = 0;
         MyContacts contact = null;
-        Messages lastMesage = new  Messages();
+        Messages lastMessage = new  Messages();
         final ChatRoom chatRoom = chatRooms.get(position);
         RealmList<Messages> messages = chatRoom.getMessages();
         for (int i = 0 ; i<messages.size();i++)
         {
             Messages message = messages.get(i);
-            lastMesage=message;
+            lastMessage=message;
             if(!message.isRead())
             {
               messageNotReaded++;
@@ -83,21 +87,26 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
         if(chatRoom!=null)
         {
             realm.beginTransaction();
-            chatRoom.setDate(lastMesage.getTime());
+            chatRoom.setDate(lastMessage.getTime());
             contact = realm.where(MyContacts.class).equalTo("phoneNumber",chatRoom.getPhoneNumber()).findFirst();
             realm.copyToRealmOrUpdate(chatRoom);
             realm.commitTransaction();
         }
-        holder.lastMessage.setText(lastMesage.getMessage());
-        holder.time.setText(lastMesage.getTime());
+        holder.lastMessage.setText(lastMessage.getMessage());
+        holder.time.setText(lastMessage.getTime());
         if(contact!=null)
         {
-            holder.name.setText(contact.getName());
-            holder.image.setImageURI("http://10.0.0.8:8080/ChatService/getImage/"+contact.getPhoneNumber());
+            String contactName = contact.getName();
+            String contactPhoneNumber = contact.getPhoneNumber();
+            holder.name.setText(contactName);
+            holder.image.setImageURI(BaseUrl.BASE_URL_IMAGE+contactPhoneNumber);
+            chatRoomMap.put(contactName,chatRoom);
             return;
         }
-        holder.image.setImageURI("http://10.0.0.8:8080/ChatService/getImage/"+chatRoom.getPhoneNumber());
+        String roomPhoneNumber = chatRoom.getPhoneNumber();
+        holder.image.setImageURI(BaseUrl.BASE_URL_IMAGE+roomPhoneNumber);
         holder.name.setText(chatRoom.getPhoneNumber());
+        chatRoomMap.put(roomPhoneNumber,chatRoom);
     }
 
     @Override
@@ -111,7 +120,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
     {
         if(filter == null )
         {
-            filter = new ChatRoomsFilter(this,chatRooms);
+            filter = new ChatRoomsFilter(this,chatRoomMap);
         }
 
         return filter;

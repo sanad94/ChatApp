@@ -10,9 +10,11 @@ import android.widget.TextView;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerTools.ContactsFilter;
+import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
 import com.facebook.drawee.drawable.ProgressBarDrawable;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -21,13 +23,8 @@ import java.util.LinkedList;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> implements Filterable
 {
-    private LinkedList<MyContacts> contacts;
+    private ArrayList<MyContacts> contacts;
     private ContactsFilter filter;
-
-    public void setContacts(LinkedList<MyContacts> contacts)
-    {
-        this.contacts = contacts;
-    }
 
     class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -42,7 +39,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-    public ContactsAdapter(LinkedList<MyContacts> contacts)
+    public ContactsAdapter(ArrayList<MyContacts> contacts)
     {
         this.contacts = contacts;
     }
@@ -59,7 +56,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     {
         MyContacts contact = contacts.get(position);
         holder.contactName.setText(contact.getName());
-        holder.image.setImageURI("http://10.0.0.8:8080/ChatService/getImage/"+contact.getPhoneNumber());
+        holder.image.setImageURI(BaseUrl.BASE_URL_IMAGE+contact.getPhoneNumber());
         holder.image.getHierarchy().setProgressBarImage(new ProgressBarDrawable());
     }
 
@@ -67,6 +64,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public int getItemCount()
     {
         return contacts.size();
+    }
+
+    public void setContacts(ArrayList<MyContacts> contacts)
+    {
+        this.contacts = contacts;
+    }
+
+    public ArrayList<MyContacts> getContacts()
+    {
+        return contacts;
     }
 
     @Override

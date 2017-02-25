@@ -2,8 +2,10 @@ package com.example.a2017.chatapp.RecyclerTools;
 
 import android.widget.Filter;
 import com.example.a2017.chatapp.Models.ChatRoom;
+import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.RecyclerAdapters.ChatRoomsAdapter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -13,14 +15,14 @@ import java.util.ArrayList;
 public  class ChatRoomsFilter extends Filter
 {
     private  ChatRoomsAdapter adapter;
-    private ArrayList<ChatRoom> originalList;
+    private HashMap<String,ChatRoom> originalMap;
     private  ArrayList<ChatRoom> filteredList;
 
-    public ChatRoomsFilter(ChatRoomsAdapter adapter, ArrayList<ChatRoom> originalList)
+    public ChatRoomsFilter(ChatRoomsAdapter adapter, HashMap<String,ChatRoom> originalMap)
     {
         super();
         this.adapter = adapter;
-        this.originalList = new ArrayList<>(originalList);
+        this.originalMap = originalMap;
         this.filteredList = new ArrayList<>();
     }
 
@@ -38,16 +40,16 @@ public  class ChatRoomsFilter extends Filter
         //http://stackoverflow.com/questions/30162431/filtering-realm-object-in-android
         // solve the issue for realm object access from other thread
         filteredList.clear();
-        filterList(constraint);
+        filterListByName(constraint);
         adapter.setChatRooms(filteredList);
         adapter.notifyDataSetChanged();
     }
 
-    private void filterList(CharSequence constraint)
+    private void filterListByPhoneNumber(CharSequence constraint)
     {
         if (constraint.length() == 0)
         {
-            filteredList.addAll(originalList);
+            filteredList.addAll(originalMap.values());
         }
         else
         {
@@ -61,14 +63,41 @@ public  class ChatRoomsFilter extends Filter
                 filterPattern = filterPattern.substring(0, 3) + "-" + filterPattern.substring(3, 6) + "-" + filterPattern.substring(6, filterPattern.length());
 
             }
-            for (int i = 0 ; i<originalList.size() ; i++ )
+            for (String key : originalMap.keySet())
             {
-                ChatRoom chatRoom = originalList.get(i);
-                if (chatRoom.getPhoneNumber().contains(filterPattern))
+
+                if (originalMap.get(key).getPhoneNumber().trim().contains(filterPattern))
                 {
+                    ChatRoom chatRoom = originalMap.get(key);
                     filteredList.add(chatRoom);
                 }
             }
+        }
+    }
+
+    private void filterListByName(CharSequence constraint)
+    {
+        if (constraint.length() == 0)
+        {
+            filteredList.addAll(originalMap.values());
+        }
+        else
+        {
+            String filterPattern = constraint.toString().toLowerCase().trim();
+            for (String key : originalMap.keySet())
+            {
+
+                if (key.trim().contains(filterPattern))
+                {
+                    ChatRoom chatRoom = originalMap.get(key);
+                    filteredList.add(chatRoom);
+                }
+            }
+        }
+
+        if(filteredList.size() == 0)
+        {
+            filterListByPhoneNumber(constraint);
         }
     }
 }
