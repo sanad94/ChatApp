@@ -6,7 +6,7 @@ package com.example.a2017.chatapp.RetrofitApi;
 
 public class BaseUrl
 {
-    public static final String BASE_URL_SERVER = "http://10.0.0.8:8080/ChatService/";
-    public static final String BASE_URL_IMAGE = "http://10.0.0.8:8080/ChatService/getImage/";
+    public static final String BASE_URL_SERVER = "http://10.0.0.9:8080/ChatService/";
+    public static final String BASE_URL_IMAGE = "http://10.0.0.9 :8080/ChatService/getImage/";
 
 }

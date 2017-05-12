@@ -39,5 +39,6 @@ dependencies {
     compile 'com.github.tamir7.contacts:contacts:1.1.4'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
+    compile 'commons-io:commons-io:2.4'
     testCompile 'junit:junit:4.12'
 }

@@ -248,7 +248,7 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
                 {
                     if (isFirstRun)
                     {
-                        lunchContactService();
+                        fireContactService();
                     }
                     else
                     {
@@ -282,7 +282,7 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
         }));
     }
 
-    private void lunchContactService()
+    private void fireContactService()
     {
         Intent serviceIntent = new Intent(getContext(), ContactService.class);
         getActivity().startService(serviceIntent);
@@ -311,7 +311,7 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
     {
         if(!isPermissionsDenied())
         {
-            lunchContactService();
+            fireContactService();
         }
     }
 }

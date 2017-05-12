@@ -3,6 +3,7 @@ package com.example.a2017.chatapp.Services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.example.a2017.chatapp.Models.ImageByte;

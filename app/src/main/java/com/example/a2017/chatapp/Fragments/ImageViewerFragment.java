@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.a2017.chatapp.R;
+import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -46,6 +47,6 @@ public class ImageViewerFragment extends Fragment
 
     private void getImage()
     {
-       image.setImageURI("http://10.0.0.8:8080/ChatService/getImage/"+fromPhoneNumber);
+       image.setImageURI(BaseUrl.BASE_URL_IMAGE+fromPhoneNumber);
     }
 }
