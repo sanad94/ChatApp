@@ -10,12 +10,11 @@ import android.widget.TextView;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerTools.ContactsFilter;
-import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
+import com.example.a2017.chatapp.Network.BaseUrl;
 import com.facebook.drawee.drawable.ProgressBarDrawable;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * Created by 2017 on 28/01/2017.

@@ -6,13 +6,12 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.example.a2017.chatapp.Models.ImageByte;
-import com.example.a2017.chatapp.RetrofitApi.ApiClientRetrofit;
-import com.example.a2017.chatapp.RetrofitApi.ApiInterfaceRetrofit;
+import com.example.a2017.chatapp.Network.ApiClientRetrofit;
+import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.google.gson.Gson;
 

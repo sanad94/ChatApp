@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.R;
-import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
+import com.example.a2017.chatapp.Network.BaseUrl;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.text.ParseException;

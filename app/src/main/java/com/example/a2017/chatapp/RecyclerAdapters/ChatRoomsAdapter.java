@@ -1,6 +1,5 @@
 package com.example.a2017.chatapp.RecyclerAdapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,7 @@ import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerTools.ChatRoomsFilter;
-import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
+import com.example.a2017.chatapp.Network.BaseUrl;
 import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.ArrayList;
 import java.util.HashMap;

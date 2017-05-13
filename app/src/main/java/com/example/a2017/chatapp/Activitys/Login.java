@@ -1,7 +1,6 @@
 package com.example.a2017.chatapp.Activitys;
 
 import android.content.Intent;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,8 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.a2017.chatapp.Models.UserToken;
-import com.example.a2017.chatapp.RetrofitApi.ApiClientRetrofit;
-import com.example.a2017.chatapp.RetrofitApi.ApiInterfaceRetrofit;
+import com.example.a2017.chatapp.Network.ApiClientRetrofit;
+import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.example.a2017.chatapp.R;
 

@@ -21,9 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.a2017.chatapp.Models.ChatRoom;
+import com.example.a2017.chatapp.Network.MyWebSocket;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.ChatRoomsAdapter;
 import com.example.a2017.chatapp.RecyclerTools.ChatRoomsDividerItemDecoration;
@@ -37,6 +37,9 @@ import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.WebSocket;
 
 /**
  * Created by 2017 on 04/02/2017.
@@ -53,6 +56,7 @@ public class ChatRoomsFragment extends Fragment
     private FragmentTransaction transaction;
     private ArrayList<ChatRoom> chatRoomList;
     private ArrayList<ChatRoom> tempChatRoomList;
+    private OkHttpClient client;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)

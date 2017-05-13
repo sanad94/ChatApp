@@ -1,4 +1,4 @@
-package com.example.a2017.chatapp.RetrofitApi;
+package com.example.a2017.chatapp.Network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

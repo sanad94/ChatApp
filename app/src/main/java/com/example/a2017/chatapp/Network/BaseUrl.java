@@ -1,4 +1,4 @@
-package com.example.a2017.chatapp.RetrofitApi;
+package com.example.a2017.chatapp.Network;
 
 /**
  * Created by 2017 on 25/02/2017.

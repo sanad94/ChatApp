@@ -8,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.a2017.chatapp.R;
-import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
-import com.example.a2017.chatapp.Utils.Preferences;
+import com.example.a2017.chatapp.Network.BaseUrl;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 /**

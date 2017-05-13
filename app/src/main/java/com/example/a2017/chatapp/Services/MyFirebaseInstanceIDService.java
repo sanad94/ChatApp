@@ -1,11 +1,8 @@
 package com.example.a2017.chatapp.Services;
 
-import android.util.Log;
-
 import com.example.a2017.chatapp.Models.UserToken;
-import com.example.a2017.chatapp.R;
-import com.example.a2017.chatapp.RetrofitApi.ApiClientRetrofit;
-import com.example.a2017.chatapp.RetrofitApi.ApiInterfaceRetrofit;
+import com.example.a2017.chatapp.Network.ApiClientRetrofit;
+import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;

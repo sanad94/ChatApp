@@ -1,4 +1,4 @@
-package com.example.a2017.chatapp.RetrofitApi;
+package com.example.a2017.chatapp.Network;
 
 import com.example.a2017.chatapp.Models.ImageByte;
 import com.example.a2017.chatapp.Models.MessageOverNetwork;

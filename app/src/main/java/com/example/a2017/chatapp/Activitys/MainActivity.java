@@ -25,8 +25,13 @@ import android.widget.TextView;
 import com.example.a2017.chatapp.Fragments.ChatRoomsFragment;
 import com.example.a2017.chatapp.Fragments.ContactsFragment;
 import com.example.a2017.chatapp.Fragments.SettingsFragment;
+import com.example.a2017.chatapp.Network.MyWebSocket;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Utils.Preferences;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.WebSocket;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -46,6 +51,11 @@ public class MainActivity extends AppCompatActivity
         backStackFragment();
         setOnNavigationItemSelectedListener();
         setItemCheckedNavigationView();
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url("ws://10.0.0.9:8080/echo").build();
+            MyWebSocket listener = new MyWebSocket();
+            WebSocket socket = client.newWebSocket(request, listener);
+            client.dispatcher().executorService().shutdown();
     }
 
     @Override
