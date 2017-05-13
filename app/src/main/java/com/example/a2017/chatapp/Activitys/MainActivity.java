@@ -82,13 +82,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void OnMessage(WebSocket socket, String text)
             {
-                if(text.contains("IsConnected:"))
+/*                if(text.contains("IsConnected:"))
                 {
                     if(text.contains("true"))
                     {
                         getSupportActionBar().setSubtitle("online");
                     }
-                }
+                }*/
 
             }
 

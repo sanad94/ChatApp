@@ -28,6 +28,10 @@ public class SingleWebSocket
         return listener;
     }
 
+    public static void setIhandleWebSocket(IhandleWebSocket handleSocket)
+    {
+        listener.setHandleMessage(handleSocket);
+    }
     public static WebSocket getSocket()
     {
         return socket;

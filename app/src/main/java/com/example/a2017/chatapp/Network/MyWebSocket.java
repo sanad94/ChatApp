@@ -21,6 +21,11 @@ public class MyWebSocket extends WebSocketListener
         this.handleMessage = handleMessage;
     }
 
+    public void setHandleMessage(IhandleWebSocket handleMessage)
+    {
+        this.handleMessage = handleMessage;
+    }
+
     @Override
     public void onOpen(WebSocket webSocket, Response response)
     {

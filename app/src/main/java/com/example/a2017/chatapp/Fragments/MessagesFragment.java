@@ -123,7 +123,7 @@ public class MessagesFragment extends Fragment
     private void getContactOnline()
     {
         SingleWebSocket.getSocket().send("IsConnected:"+fromPhoneNumber);
-        SingleWebSocket.getInstance(new IhandleWebSocket()
+        SingleWebSocket.setIhandleWebSocket(new IhandleWebSocket()
         {
             @Override
             public void OnMessage(WebSocket socket, String text)
