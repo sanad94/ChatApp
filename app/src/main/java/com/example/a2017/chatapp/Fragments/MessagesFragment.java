@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import com.example.a2017.chatapp.Models.ChatRoom;
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.Models.MyContacts;
+import com.example.a2017.chatapp.Network.IhandleWebSocket;
+import com.example.a2017.chatapp.Network.SingleWebSocket;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.MessagesAdapter;
 import com.example.a2017.chatapp.Network.ApiClientRetrofit;
@@ -38,6 +41,7 @@ import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
+import okhttp3.WebSocket;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -89,6 +93,7 @@ public class MessagesFragment extends Fragment
         sendImageButtonOnclick();
         configureRecyclerView();
         setAdjustResize();
+        getContactOnline();
         return view;
     }
 
@@ -113,6 +118,38 @@ public class MessagesFragment extends Fragment
         enableBottomNavigationView();
         setToolbarTitleToAppName();
         setAdjustPan();
+    }
+
+    private void getContactOnline()
+    {
+        SingleWebSocket.getSocket().send("IsConnected:"+fromPhoneNumber);
+        SingleWebSocket.getInstance(new IhandleWebSocket()
+        {
+            @Override
+            public void OnMessage(WebSocket socket, String text)
+            {
+                if(text.contains("IsConnected:"))
+                {
+                    if(text.contains("true"))
+                    {
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle("online");
+                        Log.d("getcontact",text);
+                    }
+                }
+            }
+
+            @Override
+            public void OnOpen(WebSocket webSocket, okhttp3.Response response)
+            {
+
+            }
+
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason)
+            {
+
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,16 +22,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a2017.chatapp.Fragments.ChatRoomsFragment;
 import com.example.a2017.chatapp.Fragments.ContactsFragment;
 import com.example.a2017.chatapp.Fragments.SettingsFragment;
+import com.example.a2017.chatapp.Network.IhandleWebSocket;
 import com.example.a2017.chatapp.Network.MyWebSocket;
+import com.example.a2017.chatapp.Network.SingleWebSocket;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Utils.Preferences;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.WebSocket;
 
 public class MainActivity extends AppCompatActivity
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentTransaction transaction;
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -51,11 +57,8 @@ public class MainActivity extends AppCompatActivity
         backStackFragment();
         setOnNavigationItemSelectedListener();
         setItemCheckedNavigationView();
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder().url("ws://10.0.0.9:8080/echo").build();
-            MyWebSocket listener = new MyWebSocket();
-            WebSocket socket = client.newWebSocket(request, listener);
-            client.dispatcher().executorService().shutdown();
+        connectToSocket();
+
     }
 
     @Override
@@ -70,6 +73,37 @@ public class MainActivity extends AppCompatActivity
     {
         super.onStart();
         Preferences.setisInbackground(false,this);
+    }
+
+    private void connectToSocket()
+    {
+        SingleWebSocket.getInstance(new IhandleWebSocket()
+        {
+            @Override
+            public void OnMessage(WebSocket socket, String text)
+            {
+                if(text.contains("IsConnected:"))
+                {
+                    if(text.contains("true"))
+                    {
+                        getSupportActionBar().setSubtitle("online");
+                    }
+                }
+
+            }
+
+            @Override
+            public void OnOpen(WebSocket webSocket, Response response)
+            {
+                webSocket.send("Connect:"+Preferences.getMyPhoneNumber(getBaseContext()));
+            }
+
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason)
+            {
+
+            }
+        });
     }
 
     private void backStackFragment()
