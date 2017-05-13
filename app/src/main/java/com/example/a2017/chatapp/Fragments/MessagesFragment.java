@@ -122,19 +122,28 @@ public class MessagesFragment extends Fragment
 
     private void getContactOnline()
     {
-        SingleWebSocket.getSocket().send("IsConnected:"+fromPhoneNumber);
+        SingleWebSocket.getSocket().send("IsConnected:"+fromPhoneNumber+",MyNumber/"+myPhoneNumber);
         SingleWebSocket.setIhandleWebSocket(new IhandleWebSocket()
         {
             @Override
             public void OnMessage(WebSocket socket, String text)
             {
-                if(text.contains("IsConnected:"))
+                String key = text.substring(0,text.indexOf(':')+1);
+                if(text.equals("IsConnected:"))
                 {
-                    if(text.contains("true"))
+                    if(text.contains("online"))
                     {
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle("online");
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.online));
                         Log.d("getcontact",text);
                     }
+                    else
+                    {
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+text.replace("IsConnected:",""));
+                    }
+                }
+                else if(text.equals("DisConnect:"))
+                {
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+text.replace("DisConnect:",""));
                 }
             }
 
@@ -362,7 +371,8 @@ public class MessagesFragment extends Fragment
     private void setToolbarTitleToAppName()
     {
         String appName = getResources().getString(R.string.app_name);
-      ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(appName);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(appName);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle("");
     }
 
     private void setAdjustPan()

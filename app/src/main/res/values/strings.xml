@@ -3,6 +3,8 @@
     <string name="text_settings">settings</string>
     <string name="text_caht">chat</string>
     <string name="image">image</string>
+    <string name="last_seen">last seen at </string>
+    <string name="online">online</string>
     <string name="text_contacts">contacts</string>
     <string name="login_validation">This field can not be blank</string>
     <string name="server_validation">we are sorry try again later</string>

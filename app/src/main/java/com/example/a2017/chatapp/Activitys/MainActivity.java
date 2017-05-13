@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentTransaction transaction;
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
+    private String myPhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         setSupportActionBar(toolbar);
+        myPhoneNumber = Preferences.getMyPhoneNumber(getBaseContext());
         goToChatRoomListFragment();
         backStackFragment();
         setOnNavigationItemSelectedListener();
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onPause();
         Preferences.setisInbackground(true,this);
+        SingleWebSocket.getSocket().send("DisConnect:"+myPhoneNumber);
     }
 
     @Override
@@ -75,6 +78,12 @@ public class MainActivity extends AppCompatActivity
         Preferences.setisInbackground(false,this);
     }
 
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+    }
+
     private void connectToSocket()
     {
         SingleWebSocket.getInstance(new IhandleWebSocket()
@@ -82,26 +91,17 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void OnMessage(WebSocket socket, String text)
             {
-/*                if(text.contains("IsConnected:"))
-                {
-                    if(text.contains("true"))
-                    {
-                        getSupportActionBar().setSubtitle("online");
-                    }
-                }*/
-
             }
 
             @Override
             public void OnOpen(WebSocket webSocket, Response response)
             {
-                webSocket.send("Connect:"+Preferences.getMyPhoneNumber(getBaseContext()));
+                webSocket.send("Connect:"+myPhoneNumber);
             }
 
             @Override
             public void onClosing(WebSocket webSocket, int code, String reason)
             {
-
             }
         });
     }
