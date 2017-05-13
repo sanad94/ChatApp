@@ -1,5 +1,6 @@
 package com.example.a2017.chatapp.RecyclerAdapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
          this.chatRooms = chatRooms;
          this.chatRoomMap = new HashMap<>();
          realm = Realm.getDefaultInstance();
+
      }
     @Override
     public ChatRoomsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -92,7 +94,14 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsAdapter.View
             realm.copyToRealmOrUpdate(chatRoom);
             realm.commitTransaction();
         }
-        holder.lastMessage.setText(lastMessage.getMessage());
+        if(lastMessage.getMessage().contains("ImageMessage:"))
+        {
+            holder.lastMessage.setText(holder.image.getContext().getResources().getString(R.string.image));
+        }
+        else
+        {
+            holder.lastMessage.setText(lastMessage.getMessage().replace("TextMessage:",""));
+        }
         holder.time.setText(lastMessage.getTime());
         if(contact!=null)
         {

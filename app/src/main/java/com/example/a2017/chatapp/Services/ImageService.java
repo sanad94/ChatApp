@@ -2,14 +2,20 @@ package com.example.a2017.chatapp.Services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.example.a2017.chatapp.Models.ImageByte;
 import com.example.a2017.chatapp.RetrofitApi.ApiClientRetrofit;
 import com.example.a2017.chatapp.RetrofitApi.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.Utils.Preferences;
+import com.google.gson.Gson;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,6 +32,7 @@ public class ImageService extends IntentService
 {
     private Uri imageUri;
     private String myPhoneNumber;
+    private String toPhoneNumber;
     public static final String ACTION ="com.example.a2017.chatapp.services.imageService";
     private boolean isRunning = false;
     private boolean checkRunning = false;
@@ -70,6 +77,7 @@ public class ImageService extends IntentService
         {
             imageUri = Uri.parse(intent.getStringExtra("imageUri"));
             myPhoneNumber = intent.getStringExtra("myPhoneNumber");
+            toPhoneNumber = intent.getStringExtra("toPhoneNumber");
             convertImageTobytes(imageUri);
             Log.d("onHandleIntent", "done");
         }
@@ -80,6 +88,7 @@ public class ImageService extends IntentService
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void convertImageTobytes(Uri uri)
     {
         isRunning = true;
@@ -95,7 +104,14 @@ public class ImageService extends IntentService
                 byteArrayOutputStream.write(buffer,0,len);
             }
             ImageByte imageByte = new ImageByte(byteArrayOutputStream.toByteArray());
-            uploadImageToServer(imageByte,uri);
+            if(toPhoneNumber == null)
+            {
+                uploadMyImageToServer(imageByte,uri);
+            }
+            else
+            {
+                sendImageMessage(imageByte);
+            }
             Log.d("convertImageTobytes","done");
         }
         catch (FileNotFoundException e)
@@ -108,7 +124,7 @@ public class ImageService extends IntentService
         }
     }
 
-    public void uploadImageToServer(ImageByte imageByte, final Uri uri)
+    public void uploadMyImageToServer(ImageByte imageByte, final Uri uri)
     {
         ApiInterfaceRetrofit retrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
         Call<Void> upload = retrofit.settImage(myPhoneNumber,imageByte);
@@ -130,6 +146,47 @@ public class ImageService extends IntentService
             @Override
             public void onFailure(Call<Void> call, Throwable t)
             {
+                Intent intentValue = new Intent(ACTION);
+                intentValue.putExtra("done",false);
+                LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intentValue);
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sendImageMessage(ImageByte imageByte)
+    {
+        Gson gson = new Gson();
+        Log.d("SendImageMessage",gson.toJson(imageByte));
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
+        String time = dateformat.format(c.getTime());
+        ApiInterfaceRetrofit retrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
+        Call<Void> upload = retrofit.sendImageMessage(myPhoneNumber,toPhoneNumber,time,imageByte);
+        upload.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                if(response.code()==200 || response.code()==204)
+                {
+                    Log.d("SendImageMessage","done");
+                    Intent intentValue = new Intent(ACTION);
+                    intentValue.putExtra("done",true);
+                    LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intentValue);
+                }
+                else
+                {
+                    Log.d("SendImageMessage",String.valueOf(response.code()));
+                    Log.d("SendImageMessage",myPhoneNumber);
+                    Log.d("SendImageMessage",toPhoneNumber);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t)
+            {
+                Log.d("SendImageMessage","onFailure");
                 Intent intentValue = new Intent(ACTION);
                 intentValue.putExtra("done",false);
                 LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intentValue);

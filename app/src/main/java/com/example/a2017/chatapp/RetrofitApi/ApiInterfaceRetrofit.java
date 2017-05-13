@@ -37,5 +37,8 @@ public interface ApiInterfaceRetrofit
     @POST("settImage/{phoneNumber}")
     Call<Void> settImage( @Path("phoneNumber") String phoneNumber , @Body ImageByte imageByte );
 
+    @POST("sendImageMessage/{fromPhoneNumber}/{toPhoneNumber}/{time}")
+    Call<Void> sendImageMessage( @Path("fromPhoneNumber") String fromPhoneNumber ,@Path("toPhoneNumber") String toPhoneNumber ,@Path("time") String time , @Body ImageByte imageByte );
+
 
 }

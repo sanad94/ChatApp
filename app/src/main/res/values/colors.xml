@@ -10,5 +10,7 @@
     <color name="black">#444444</color>
     <color name="dark_black">#d9000000</color>
     <color name="red">#f44336</color>
+    <color name="bubble_blue">#5c6bc0</color>
+
 </resources>
 

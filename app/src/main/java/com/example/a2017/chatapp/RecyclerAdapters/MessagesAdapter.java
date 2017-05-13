@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.R;
+import com.example.a2017.chatapp.RetrofitApi.BaseUrl;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,32 +26,48 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 {
     private ArrayList<Messages> messages ;
     private String fromPhoneNumber;
-    private int isMe = 101;
+    private String toPhoneNumber;
+    private int imageMessage = 100;
+    private int isMe_imageMessage = 101;
+    private int isMe_textMessage = 102;
     private Realm realm;
     class ViewHolder extends RecyclerView.ViewHolder
     {
         TextView message , time ;
+        SimpleDraweeView image ;
         public ViewHolder(View itemView)
         {
             super(itemView);
+            image = (SimpleDraweeView) itemView.findViewById(R.id.imageMessage);
             message= (TextView) itemView.findViewById(R.id.message);
             time= (TextView) itemView.findViewById(R.id.time);
         }
     }
 
-   public MessagesAdapter(ArrayList<Messages> messages, String fromPhoneNumber)
+   public MessagesAdapter(ArrayList<Messages> messages, String fromPhoneNumber ,String toPhoneNumber)
     {
         this.messages=messages;
         this.fromPhoneNumber=fromPhoneNumber;
+        this.toPhoneNumber = toPhoneNumber;
         realm=Realm.getDefaultInstance();
     }
     @Override
     public MessagesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View itemview = null;
-        if (viewType==isMe)
+        if (viewType==isMe_textMessage)
         {
             itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_to,parent,false);
+            return  new ViewHolder(itemview);
+        }
+        else if(viewType==isMe_imageMessage)
+        {
+            itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_message_to,parent,false);
+            return  new ViewHolder(itemview);
+        }
+        else if(viewType== imageMessage)
+        {
+            itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_message_from,parent,false);
             return  new ViewHolder(itemview);
         }
         itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_from,parent,false);
@@ -83,7 +101,21 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         {
             e.printStackTrace();
         }
-        holder.message.setText(message.getMessage());
+        if(message.getMessage().contains("ImageMessage:"))
+        {
+            if(messages.get(position).getFromPhoneNumber().equals(fromPhoneNumber))
+            {
+                holder.image.setImageURI(message.getMessage().replace("ImageMessage:", ""));
+            }
+            else
+            {
+                holder.image.setImageURI(BaseUrl.BASE_URL_ROOM_IMAGE+message.getMessage().replace("ImageMessage:", "")+"/"+fromPhoneNumber+"/"+toPhoneNumber);
+            }
+        }
+        else
+        {
+            holder.message.setText(message.getMessage().replace("TextMessage:",""));
+        }
 
     }
 
@@ -99,7 +131,18 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
      if(messages.get(position).getFromPhoneNumber().equals(fromPhoneNumber))
      {
-      return isMe;
+      if(messages.get(position).getMessage().contains("ImageMessage:"))
+      {
+          return isMe_imageMessage;
+      }
+        return isMe_textMessage;
+     }
+     else
+     {
+         if(messages.get(position).getMessage().contains("ImageMessage:"))
+         {
+             return imageMessage;
+         }
      }
 
         return position;

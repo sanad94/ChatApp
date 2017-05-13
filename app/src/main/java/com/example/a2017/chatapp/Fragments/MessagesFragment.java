@@ -1,12 +1,18 @@
 package com.example.a2017.chatapp.Fragments;
 
+import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +38,7 @@ import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.MessagesAdapter;
 import com.example.a2017.chatapp.RetrofitApi.ApiClientRetrofit;
 import com.example.a2017.chatapp.RetrofitApi.ApiInterfaceRetrofit;
+import com.example.a2017.chatapp.Services.ImageService;
 import com.example.a2017.chatapp.Utils.Preferences;
 import java.util.ArrayList;
 import io.realm.Realm;
@@ -48,6 +55,7 @@ import retrofit2.Response;
 public class MessagesFragment extends Fragment
 {
     private final static String FROM_PHONE_NUMBER = "from_phone_Number";
+    private static int IMAGE_REQUEST_CODE = 101;
     public static RecyclerView recyclerView_message_list ;
     public static MessagesAdapter messagesAdapter;
     private ArrayList<Messages> messages;
@@ -57,9 +65,11 @@ public class MessagesFragment extends Fragment
     private Realm realm ;
     private EditText messageEditText;
     private Button send;
+    private Button sendImage;
     private int fragment_container_padding_bottom;
     private View bottomNavigationView;
     private View fragment_container;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -78,9 +88,11 @@ public class MessagesFragment extends Fragment
         recyclerView_message_list= (RecyclerView) view.findViewById(R.id.recycler_messages);
         messageEditText = (EditText) view.findViewById(R.id.message);
         send = (Button) view.findViewById(R.id.btn_send);
+        sendImage = (Button) view.findViewById(R.id.btn_img);
         setToolbarTitleToContact();
         disableBottomNavigationView();
         sendButtonOnClick();
+        sendImageButtonOnclick();
         configureRecyclerView();
         setAdjustResize();
         return view;
@@ -109,12 +121,41 @@ public class MessagesFragment extends Fragment
         setAdjustPan();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(requestCode==IMAGE_REQUEST_CODE && data!=null)
+        {
+            Uri imageUri = data.getData();
+            Intent imageServiceIntent = new Intent(getContext(),ImageService.class);
+            imageServiceIntent.putExtra("check",false);
+            imageServiceIntent.putExtra("imageUri",imageUri.toString());
+            imageServiceIntent.putExtra("myPhoneNumber",myPhoneNumber);
+            imageServiceIntent.putExtra("toPhoneNumber",fromPhoneNumber);
+            getActivity().startService(imageServiceIntent);
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
+            String time = dateformat.format(c.getTime());
+            String tempMessage ="ImageMessage:";
+            tempMessage =  tempMessage + imageUri.toString();
+            final Messages messageToSave = new Messages(myPhoneNumber,true,time,tempMessage);
+            final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,tempMessage,time);
+            messages.add(messageToSave);
+            messagesAdapter.setMessages(messages);
+            messagesAdapter.notifyDataSetChanged();
+            saveToRelm(messageToSave);
+            sendMessageToserver(messageToSend);
+            recyclerView_message_list.scrollToPosition(messages.size()-1);
+        }
+    }
+
     private void configureRecyclerView()
     {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setStackFromEnd(true);
         messages = new ArrayList<>();
-        messagesAdapter = new MessagesAdapter(messages,myPhoneNumber);
+        messagesAdapter = new MessagesAdapter(messages,myPhoneNumber,fromPhoneNumber);
         recyclerView_message_list.setLayoutManager(layoutManager);
         recyclerView_message_list.setItemAnimator(new DefaultItemAnimator());
         recyclerView_message_list.setAdapter(messagesAdapter);
@@ -128,14 +169,16 @@ public class MessagesFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                String tempMessage = messageEditText.getText().toString();
+                String tempMessage ="";
+                tempMessage =  messageEditText.getText().toString();
                 if(!tempMessage.matches(""))
                 {
                     //"06-feb-2018 06:74 pm"
-                   /* Calendar c = Calendar.getInstance();
+                    Calendar c = Calendar.getInstance();
                     SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-                    String time = dateformat.format(c.getTime());*/
-                    String time ="";
+                    String time = dateformat.format(c.getTime());
+//                    String time ="";
+                    tempMessage ="TextMessage:" + tempMessage;
                     final Messages messageToSave = new Messages(myPhoneNumber,true,time,tempMessage);
                     final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,tempMessage,time);
                     messages.add(messageToSave);
@@ -150,6 +193,23 @@ public class MessagesFragment extends Fragment
         });
     }
 
+    private void sendImageButtonOnclick()
+    {
+        sendImage.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
+                {
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    // intent.setType("image/jpg");
+                    intent.setType("*/*");
+                    startActivityForResult(intent, IMAGE_REQUEST_CODE);
+                }
+            }
+        });
+    }
     private void getArgument()
     {
          fromPhoneNumber = getArguments().getString(FROM_PHONE_NUMBER);
