@@ -14,10 +14,12 @@ public class SingleWebSocket
     private static WebSocket socket ;
     private static  OkHttpClient client;
     private static Request request;
+    public static int RECONECT_FLAG = 1;
 
-    public static MyWebSocket getInstance(IhandleWebSocket handleSocket)
+    public static MyWebSocket getInstance(int flag,IhandleWebSocket handleSocket )
     {
-        if(listener==null)
+        // using flag to reconnect to the socket
+        if(listener==null ||flag == RECONECT_FLAG )
         {
             client = new OkHttpClient();
              request = new Request.Builder().url(BaseUrl.BASE_URL_WEB_SOCKET).build();

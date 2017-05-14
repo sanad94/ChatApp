@@ -10,6 +10,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.example.a2017.chatapp.Models.ImageByte;
+import com.example.a2017.chatapp.Models.ImageMessageOverNetwork;
 import com.example.a2017.chatapp.Network.ApiClientRetrofit;
 import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.Utils.Preferences;
@@ -157,11 +158,13 @@ public class ImageService extends IntentService
     {
         Gson gson = new Gson();
         Log.d("SendImageMessage",gson.toJson(imageByte));
-        Calendar c = Calendar.getInstance();
+/*        Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-        String time = dateformat.format(c.getTime());
+        String time = dateformat.format(c.getTime());*/
+        String time = "";
+        ImageMessageOverNetwork message = new ImageMessageOverNetwork(myPhoneNumber,toPhoneNumber,time,imageByte.getImage());
         ApiInterfaceRetrofit retrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
-        Call<Void> upload = retrofit.sendImageMessage(myPhoneNumber,toPhoneNumber,time,imageByte);
+        Call<Void> upload = retrofit.sendImageMessage(message);
         upload.enqueue(new Callback<Void>()
         {
             @Override

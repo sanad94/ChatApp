@@ -27,11 +27,13 @@ import android.widget.Toast;
 import com.example.a2017.chatapp.Fragments.ChatRoomsFragment;
 import com.example.a2017.chatapp.Fragments.ContactsFragment;
 import com.example.a2017.chatapp.Fragments.SettingsFragment;
+import com.example.a2017.chatapp.Models.OnlineModel;
 import com.example.a2017.chatapp.Network.IhandleWebSocket;
 import com.example.a2017.chatapp.Network.MyWebSocket;
 import com.example.a2017.chatapp.Network.SingleWebSocket;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Utils.Preferences;
+import com.google.gson.Gson;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
     private String myPhoneNumber;
+    private OnlineModel onlineModel;
+    private Gson gson = new Gson();
+    private IhandleWebSocket handleWebSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,8 +64,6 @@ public class MainActivity extends AppCompatActivity
         backStackFragment();
         setOnNavigationItemSelectedListener();
         setItemCheckedNavigationView();
-        connectToSocket();
-
     }
 
     @Override
@@ -68,7 +71,6 @@ public class MainActivity extends AppCompatActivity
     {
         super.onPause();
         Preferences.setisInbackground(true,this);
-        SingleWebSocket.getSocket().send("DisConnect:"+myPhoneNumber);
     }
 
     @Override
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onStart();
         Preferences.setisInbackground(false,this);
+        connectToSocket();
     }
 
     @Override
@@ -84,9 +87,26 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        SingleWebSocket.getSocket().close(1000,"");
+    }
+    private void disConnectFromSocket()
+    {
+        final Gson gson = new Gson();
+        OnlineModel onlineModel = new OnlineModel();
+        onlineModel.setService("OffLine");
+        onlineModel.setFromPhoneNumber(myPhoneNumber);
+        onlineModel.setToPhoneNumber("0504229524");
+        SingleWebSocket.getSocket().send(gson.toJson(onlineModel));
+        SingleWebSocket.getSocket().close(1000,"");
+    }
+
     private void connectToSocket()
     {
-        SingleWebSocket.getInstance(new IhandleWebSocket()
+       handleWebSocket = new IhandleWebSocket()
         {
             @Override
             public void OnMessage(WebSocket socket, String text)
@@ -96,14 +116,19 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void OnOpen(WebSocket webSocket, Response response)
             {
-                webSocket.send("Connect:"+myPhoneNumber);
+                onlineModel = new OnlineModel();
+                onlineModel.setService("Connect");
+                onlineModel.setFromPhoneNumber(myPhoneNumber);
+                webSocket.send(gson.toJson(onlineModel));
+                onlineModel=null;
             }
 
             @Override
             public void onClosing(WebSocket webSocket, int code, String reason)
             {
             }
-        });
+        };
+        SingleWebSocket.getInstance(SingleWebSocket.RECONECT_FLAG,handleWebSocket);
     }
 
     private void backStackFragment()

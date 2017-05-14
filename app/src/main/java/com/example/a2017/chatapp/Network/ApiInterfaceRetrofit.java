@@ -1,6 +1,7 @@
 package com.example.a2017.chatapp.Network;
 
 import com.example.a2017.chatapp.Models.ImageByte;
+import com.example.a2017.chatapp.Models.ImageMessageOverNetwork;
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.Models.UserToken;
@@ -36,9 +37,16 @@ public interface ApiInterfaceRetrofit
 
     @POST("settImage/{phoneNumber}")
     Call<Void> settImage( @Path("phoneNumber") String phoneNumber , @Body ImageByte imageByte );
+/*
 
     @POST("sendImageMessage/{fromPhoneNumber}/{toPhoneNumber}/{time}")
     Call<Void> sendImageMessage( @Path("fromPhoneNumber") String fromPhoneNumber ,@Path("toPhoneNumber") String toPhoneNumber ,@Path("time") String time , @Body ImageByte imageByte );
+
+*/
+
+    @POST("sendImageMessage")
+    Call<Void> sendImageMessage(@Body ImageMessageOverNetwork message);
+
 
 
 }

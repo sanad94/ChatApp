@@ -29,6 +29,7 @@ import com.example.a2017.chatapp.Models.ChatRoom;
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.Models.MyContacts;
+import com.example.a2017.chatapp.Models.OnlineModel;
 import com.example.a2017.chatapp.Network.IhandleWebSocket;
 import com.example.a2017.chatapp.Network.SingleWebSocket;
 import com.example.a2017.chatapp.R;
@@ -37,6 +38,8 @@ import com.example.a2017.chatapp.Network.ApiClientRetrofit;
 import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.Services.ImageService;
 import com.example.a2017.chatapp.Utils.Preferences;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -122,28 +125,37 @@ public class MessagesFragment extends Fragment
 
     private void getContactOnline()
     {
-        SingleWebSocket.getSocket().send("IsConnected:"+fromPhoneNumber+",MyNumber/"+myPhoneNumber);
+        final Gson gson = new Gson();
+        OnlineModel onlineModel = new OnlineModel();
+        onlineModel.setService("IsConnected");
+        onlineModel.setFromPhoneNumber(myPhoneNumber);
+        onlineModel.setToPhoneNumber(fromPhoneNumber);
+        SingleWebSocket.getSocket().send(gson.toJson(onlineModel));
         SingleWebSocket.setIhandleWebSocket(new IhandleWebSocket()
         {
             @Override
             public void OnMessage(WebSocket socket, String text)
             {
-                String key = text.substring(0,text.indexOf(':')+1);
-                if(text.equals("IsConnected:"))
+                OnlineModel online = gson.fromJson(text,OnlineModel.class);
+                String service = online.getService();
+                if(service.equals("IsConnected"))
                 {
-                    if(text.contains("online"))
+                    if(online.getStatus().equals("online"))
                     {
                         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.online));
                         Log.d("getcontact",text);
                     }
                     else
                     {
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+text.replace("IsConnected:",""));
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+online.getStatus());
                     }
                 }
-                else if(text.equals("DisConnect:"))
+                else if(service.equals("OffLine"))
                 {
-                    ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+text.replace("DisConnect:",""));
+                    if(online.getFromPhoneNumber().equals(fromPhoneNumber))
+                    {
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+text.replace("DisConnect:",""));
+                    }
                 }
             }
 
@@ -174,9 +186,10 @@ public class MessagesFragment extends Fragment
             imageServiceIntent.putExtra("myPhoneNumber",myPhoneNumber);
             imageServiceIntent.putExtra("toPhoneNumber",fromPhoneNumber);
             getActivity().startService(imageServiceIntent);
-            Calendar c = Calendar.getInstance();
+/*            Calendar c = Calendar.getInstance();
             SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-            String time = dateformat.format(c.getTime());
+            String time = dateformat.format(c.getTime());*/
+            String time = "";
             String tempMessage ="ImageMessage:";
             tempMessage =  tempMessage + imageUri.toString();
             final Messages messageToSave = new Messages(myPhoneNumber,true,time,tempMessage);
@@ -185,7 +198,6 @@ public class MessagesFragment extends Fragment
             messagesAdapter.setMessages(messages);
             messagesAdapter.notifyDataSetChanged();
             saveToRelm(messageToSave);
-            sendMessageToserver(messageToSend);
             recyclerView_message_list.scrollToPosition(messages.size()-1);
         }
     }
@@ -214,10 +226,10 @@ public class MessagesFragment extends Fragment
                 if(!tempMessage.matches(""))
                 {
                     //"06-feb-2018 06:74 pm"
-                    Calendar c = Calendar.getInstance();
-                    SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-                    String time = dateformat.format(c.getTime());
-//                    String time ="";
+//                    Calendar c = Calendar.getInstance();
+//                    SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
+//                    String time = dateformat.format(c.getTime());
+                    String time ="";
                     tempMessage ="TextMessage:" + tempMessage;
                     final Messages messageToSave = new Messages(myPhoneNumber,true,time,tempMessage);
                     final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,tempMessage,time);
