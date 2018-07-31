@@ -137,6 +137,10 @@ public class MessagesFragment extends Fragment
             public void OnMessage(WebSocket socket, String text)
             {
                 OnlineModel online = gson.fromJson(text,OnlineModel.class);
+                if(online==null)
+                {
+                    return;
+                }
                 String service = online.getService();
                 if(service.equals("IsConnected"))
                 {
