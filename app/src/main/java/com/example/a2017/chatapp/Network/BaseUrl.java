@@ -10,7 +10,7 @@ public class BaseUrl
     public static final String BASE_URL_SERVER = "http://"+IP_ADDRESS+":9090/ChatService/";
     public static final String BASE_URL_IMAGE = "http://"+IP_ADDRESS+":9090/ChatService/getImage/";
     public static final String BASE_URL_ROOM_IMAGE = "http://"+IP_ADDRESS+":9090/ChatService/getRoomImage/";
-    public static final String BASE_URL_WEB_SOCKET = "ws://"+IP_ADDRESS+":9090/OnlineSocket";
+    public static final String BASE_URL_Online_SOCKET = "ws://"+IP_ADDRESS+":9090/OnlineSocket";
     public static final String BASE_URL_TYPING_SOCKET = "ws://"+IP_ADDRESS+":9090/TypingSocket";
 
 }

@@ -24,15 +24,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-
 import com.example.a2017.chatapp.Models.ChatRoom;
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.Models.SocketsModel;
 import com.example.a2017.chatapp.Network.IhandleWebSocket;
-import com.example.a2017.chatapp.Network.OnlineWebSocket;
-import com.example.a2017.chatapp.Network.TypingWebSocket;
+import com.example.a2017.chatapp.Network.SocketEnum;
+import com.example.a2017.chatapp.Network.SocketsFactory;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.MessagesAdapter;
 import com.example.a2017.chatapp.Network.ApiClientRetrofit;
@@ -41,7 +40,6 @@ import com.example.a2017.chatapp.Services.ImageService;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.example.a2017.chatapp.Utils.UiHandler;
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -124,8 +122,8 @@ public class MessagesFragment extends Fragment
         enableBottomNavigationView();
         setToolbarTitleToAppName();
         setAdjustPan();
-        TypingWebSocket.setPreviousIhandleWebSocket();
-        OnlineWebSocket.setPreviousIhandleWebSocket();
+        SocketsFactory.getSocket(SocketEnum.TYPING.name()).setPreviousIhandleWebSocket();
+        SocketsFactory.getSocket(SocketEnum.ONLINE.name()).setPreviousIhandleWebSocket();
     }
 
     private void getContactOnline()
@@ -135,8 +133,8 @@ public class MessagesFragment extends Fragment
         socketsModel.setService("IsConnected");
         socketsModel.setFromPhoneNumber(myPhoneNumber);
         socketsModel.setToPhoneNumber(fromPhoneNumber);
-        OnlineWebSocket.getSocket().send(gson.toJson(socketsModel));
-        OnlineWebSocket.setIhandleWebSocket(new IhandleWebSocket()
+        SocketsFactory.getSocket(SocketEnum.ONLINE.name()).getSocket().send(gson.toJson(socketsModel));
+        SocketsFactory.getSocket(SocketEnum.ONLINE.name()).setIhandleWebSocket(new IhandleWebSocket()
         {
             @Override
             public void OnMessage(WebSocket socket, String text)
@@ -456,7 +454,7 @@ public class MessagesFragment extends Fragment
             socketsModel.setService("typing");
             socketsModel.setFromPhoneNumber(myPhoneNumber);
             socketsModel.setToPhoneNumber(fromPhoneNumber);
-            TypingWebSocket.getSocket().send(gson.toJson(socketsModel));
+            SocketsFactory.getSocket(SocketEnum.TYPING.name()).getSocket().send(gson.toJson(socketsModel));
 
 
 
@@ -471,8 +469,8 @@ public class MessagesFragment extends Fragment
         socketsModel.setService("Connect");
         socketsModel.setFromPhoneNumber(myPhoneNumber);
         socketsModel.setToPhoneNumber(fromPhoneNumber);
-        TypingWebSocket.getSocket().send(gson.toJson(socketsModel));
-        TypingWebSocket.setIhandleWebSocket(new IhandleWebSocket()
+        SocketsFactory.getSocket(SocketEnum.TYPING.name()).getSocket().send(gson.toJson(socketsModel));
+        SocketsFactory.getSocket(SocketEnum.TYPING.name()).setIhandleWebSocket(new IhandleWebSocket()
 
         {
             @Override

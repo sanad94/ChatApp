@@ -22,8 +22,8 @@ import com.example.a2017.chatapp.Fragments.ContactsFragment;
 import com.example.a2017.chatapp.Fragments.SettingsFragment;
 import com.example.a2017.chatapp.Models.SocketsModel;
 import com.example.a2017.chatapp.Network.IhandleWebSocket;
-import com.example.a2017.chatapp.Network.OnlineWebSocket;
-import com.example.a2017.chatapp.Network.TypingWebSocket;
+import com.example.a2017.chatapp.Network.SocketEnum;
+import com.example.a2017.chatapp.Network.SocketsFactory;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.google.gson.Gson;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStop()
     {
         super.onStop();
-        OnlineWebSocket.getSocket().close(1000,"");
+        SocketsFactory.getSocket(SocketEnum.ONLINE.name()).getSocket().close(1000,"");
     }
 
     private void disConnectFromSocket()
@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity
         socketsModel.setService("OffLine");
         socketsModel.setFromPhoneNumber(myPhoneNumber);
         socketsModel.setToPhoneNumber("0504229524");
-        OnlineWebSocket.getSocket().send(gson.toJson(socketsModel));
-        OnlineWebSocket.getSocket().close(1000,"");
+        SocketsFactory.getSocket(SocketEnum.ONLINE.name()).getSocket().send(gson.toJson(socketsModel));
+        SocketsFactory.getSocket(SocketEnum.ONLINE.name()).getSocket().close(1000,"");
     }
 
     private void connectToSockets()
@@ -124,8 +124,8 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        OnlineWebSocket.getInstance(OnlineWebSocket.RECONECT_FLAG,onlineWebSocketHandler);
-        //connect to typing sockets
+       SocketsFactory.getSocket(SocketEnum.ONLINE.name()).init(onlineWebSocketHandler);
+       //connect to typing sockets
         typingWebSocketHandler = new IhandleWebSocket()
         {
             @Override
@@ -148,8 +148,7 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        TypingWebSocket.getInstance(OnlineWebSocket.RECONECT_FLAG,typingWebSocketHandler);
-    }
+        SocketsFactory.getSocket(SocketEnum.TYPING.name()).init(onlineWebSocketHandler);    }
 
     private void backStackFragment()
     {
