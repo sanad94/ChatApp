@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.Messages;
+import com.example.a2017.chatapp.Network.ApiClientRetrofit;
+import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Network.BaseUrl;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -17,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.realm.Realm;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by 2017 on 04/02/2017.
@@ -86,9 +92,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 public void execute(Realm realm)
                 {
                     message.setRead(true);
+                    message.setStatus("read");
                 }
             });
         }
+        final MessageOverNetwork messageToSend = new MessageOverNetwork(toPhoneNumber,message.getFromPhoneNumber(),message.getTime(),message.getMessage(),message.getUuid(),"read");
+        sendMessageToserver(messageToSend);
         SimpleDateFormat timeformat = new SimpleDateFormat("hh:mm aa");
         SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
         try
@@ -156,5 +165,25 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     public ArrayList<Messages> getMessages()
     {
         return messages;
+    }
+
+    private void sendMessageToserver(final MessageOverNetwork messageToSend)
+    {
+        ApiInterfaceRetrofit apiClientRetrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
+        Call<MessageOverNetwork> sendMessage = apiClientRetrofit.sendMessage(messageToSend);
+        sendMessage.enqueue(new Callback<MessageOverNetwork>()
+        {
+            @Override
+            public void onResponse(Call<MessageOverNetwork> call, Response<MessageOverNetwork> response)
+            {
+
+            }
+
+            @Override
+            public void onFailure(Call<MessageOverNetwork> call, Throwable t)
+            {
+
+            }
+        });
     }
 }

@@ -12,7 +12,10 @@ import com.example.a2017.chatapp.Activitys.MainActivity;
 import com.example.a2017.chatapp.Fragments.ChatRoomsFragment;
 import com.example.a2017.chatapp.Fragments.MessagesFragment;
 import com.example.a2017.chatapp.Models.ChatRoom;
+import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.Messages;
+import com.example.a2017.chatapp.Network.ApiClientRetrofit;
+import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.ChatRoomsAdapter;
 import com.example.a2017.chatapp.RecyclerAdapters.MessagesAdapter;
@@ -25,6 +28,9 @@ import android.os.Handler;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by 2017 on 04/02/2017.
@@ -37,10 +43,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     private Runnable runnable;
     private Handler handler;
     private String uuid;
+    private String status;
     private String phoneNumber,message,time;
     private boolean isInChatRoom;
     private boolean isInbackground;
-
+    private String myPhoneNumber = Preferences.getMyPhoneNumber(getBaseContext());
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage)
     {
@@ -51,9 +58,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
             message = remoteMessage.getData().get("message");
             time = remoteMessage.getData().get("time");
             uuid = remoteMessage.getData().get("uuid");
+            status = remoteMessage.getData().get("status");
             isInChatRoom = Preferences.isInChatRoom(getBaseContext());
             isInbackground = Preferences.isInbackground(getBaseContext());
-            addToRealm();
+            Messages obj = realm.where(Messages.class).equalTo("uuid", uuid).findFirst();
+            if(obj==null)
+            {
+                addToRealm();
+                final MessageOverNetwork messageToSend = new MessageOverNetwork(phoneNumber,myPhoneNumber,time,message,uuid,"delivered");
+                sendMessageToserver(messageToSend);
+            }
+            else
+            {
+                obj.setStatus(status);
+                updateMessage(obj);
+            }
+
             if(!isInbackground)
             {
                 if(!isInChatRoom)
@@ -202,6 +222,38 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         };
         handler = new Handler(Looper.getMainLooper());
         handler.post(runnable);
+    }
+
+    private void updateMessage(final Messages message)
+    {
+        realm.executeTransaction(new Realm.Transaction()
+        {
+            @Override
+            public void execute(Realm realm)
+            {
+                realm.copyToRealmOrUpdate(message);
+            }
+        });
+    }
+
+    private void sendMessageToserver(final MessageOverNetwork messageToSend)
+    {
+        ApiInterfaceRetrofit apiClientRetrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
+        Call<MessageOverNetwork> sendMessage = apiClientRetrofit.sendMessage(messageToSend);
+        sendMessage.enqueue(new Callback<MessageOverNetwork>()
+        {
+            @Override
+            public void onResponse(Call<MessageOverNetwork> call, Response<MessageOverNetwork> response)
+            {
+
+            }
+
+            @Override
+            public void onFailure(Call<MessageOverNetwork> call, Throwable t)
+            {
+
+            }
+        });
     }
 }
 
