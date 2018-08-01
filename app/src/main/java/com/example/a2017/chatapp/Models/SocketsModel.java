@@ -2,7 +2,7 @@ package com.example.a2017.chatapp.Models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class OnlineModel
+public class SocketsModel
 {
     @SerializedName("service")
     private String service ;
@@ -15,14 +15,14 @@ public class OnlineModel
 
     // for connect service
     // for request disconnect
-    public OnlineModel(String service, String fromPhoneNumber)
+    public SocketsModel(String service, String fromPhoneNumber)
     {
         this.service = service;
         this.fromPhoneNumber = fromPhoneNumber;
     }
 
     // for request isconnect service
-    public OnlineModel(String service, String toPhoneNumber, String fromPhoneNumber, String status)
+    public SocketsModel(String service, String toPhoneNumber, String fromPhoneNumber, String status)
     {
         this.service = service;
         this.toPhoneNumber = toPhoneNumber;
@@ -30,7 +30,7 @@ public class OnlineModel
         this.status = status;
     }
 
-    public OnlineModel()
+    public SocketsModel()
     {
     }
 

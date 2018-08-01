@@ -4,8 +4,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,15 +29,17 @@ import com.example.a2017.chatapp.Models.ChatRoom;
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
 import com.example.a2017.chatapp.Models.Messages;
 import com.example.a2017.chatapp.Models.MyContacts;
-import com.example.a2017.chatapp.Models.OnlineModel;
+import com.example.a2017.chatapp.Models.SocketsModel;
 import com.example.a2017.chatapp.Network.IhandleWebSocket;
-import com.example.a2017.chatapp.Network.SingleWebSocket;
+import com.example.a2017.chatapp.Network.OnlineWebSocket;
+import com.example.a2017.chatapp.Network.TypingWebSocket;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.MessagesAdapter;
 import com.example.a2017.chatapp.Network.ApiClientRetrofit;
 import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.Services.ImageService;
 import com.example.a2017.chatapp.Utils.Preferences;
+import com.example.a2017.chatapp.Utils.UiHandler;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -97,6 +99,7 @@ public class MessagesFragment extends Fragment
         configureRecyclerView();
         setAdjustResize();
         getContactOnline();
+        notifyTyping();
         return view;
     }
 
@@ -121,46 +124,58 @@ public class MessagesFragment extends Fragment
         enableBottomNavigationView();
         setToolbarTitleToAppName();
         setAdjustPan();
+        TypingWebSocket.setPreviousIhandleWebSocket();
     }
 
     private void getContactOnline()
     {
         final Gson gson = new Gson();
-        OnlineModel onlineModel = new OnlineModel();
-        onlineModel.setService("IsConnected");
-        onlineModel.setFromPhoneNumber(myPhoneNumber);
-        onlineModel.setToPhoneNumber(fromPhoneNumber);
-        SingleWebSocket.getSocket().send(gson.toJson(onlineModel));
-        SingleWebSocket.setIhandleWebSocket(new IhandleWebSocket()
+        SocketsModel socketsModel = new SocketsModel();
+        socketsModel.setService("IsConnected");
+        socketsModel.setFromPhoneNumber(myPhoneNumber);
+        socketsModel.setToPhoneNumber(fromPhoneNumber);
+        OnlineWebSocket.getSocket().send(gson.toJson(socketsModel));
+        OnlineWebSocket.setIhandleWebSocket(new IhandleWebSocket()
         {
             @Override
             public void OnMessage(WebSocket socket, String text)
             {
-                OnlineModel online = gson.fromJson(text,OnlineModel.class);
+                SocketsModel online = gson.fromJson(text,SocketsModel.class);
                 if(online==null)
                 {
                     return;
                 }
                 String service = online.getService();
+                String title = "";
                 if(service.equals("IsConnected"))
                 {
+
                     if(online.getStatus().equals("online"))
                     {
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.online));
+                        title =getContext().getString(R.string.online);
                         Log.d("getcontact",text);
                     }
                     else
                     {
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+online.getStatus());
+                        title = getContext().getString(R.string.last_seen)+online.getStatus();
                     }
                 }
-                else if(service.equals("OffLine"))
-                {
-                    if(online.getFromPhoneNumber().equals(fromPhoneNumber))
+
+                final String f_title = title;
+                UiHandler.runOnUIThread(new Runnable() {
+                    @Override
+                    public void run()
                     {
-                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+text.replace("DisConnect:",""));
+                         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(f_title);
                     }
-                }
+                });
+//                else if(service.equals("OffLine"))
+//                {
+//                    if(online.getFromPhoneNumber().equals(fromPhoneNumber))
+//                    {
+//                        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.last_seen)+text.replace("DisConnect:",""));
+//                    }
+//                }
             }
 
             @Override
@@ -374,12 +389,21 @@ public class MessagesFragment extends Fragment
             public void execute(Realm realm)
             {
                 MyContacts contact=realm.where(MyContacts.class).equalTo("phoneNumber",fromPhoneNumber).findFirst();
+                String title = fromPhoneNumber ;
                 if(contact!=null)
                 {
-                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(contact.getName());
-                    return;
+                    title = contact.getName();
                 }
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(fromPhoneNumber);
+                final String f_title = title ;
+                UiHandler.runOnUIThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(f_title);
+
+                    }
+                });
             }
         });
     }
@@ -399,6 +423,102 @@ public class MessagesFragment extends Fragment
     private void setAdjustResize()
     {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+    }
+
+    private TextWatcher textWatcher = new TextWatcher()
+    {
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                                      int after) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s)
+        {
+            String str = s.toString().trim();
+            final Gson gson = new Gson();
+            SocketsModel socketsModel = new SocketsModel();
+            if(str.equals(""))
+            {
+                socketsModel.setStatus("false");
+            }
+            else
+            {
+                socketsModel.setStatus("true");
+            }
+            socketsModel.setService("typing");
+            socketsModel.setFromPhoneNumber(myPhoneNumber);
+            socketsModel.setToPhoneNumber(fromPhoneNumber);
+            TypingWebSocket.getSocket().send(gson.toJson(socketsModel));
+
+
+
+        }
+    };
+
+    private void notifyTyping()
+    {
+        messageEditText.addTextChangedListener(textWatcher);
+        final Gson gson = new Gson();
+        SocketsModel socketsModel = new SocketsModel();
+        socketsModel.setService("Connect");
+        socketsModel.setFromPhoneNumber(myPhoneNumber);
+        socketsModel.setToPhoneNumber(fromPhoneNumber);
+        TypingWebSocket.getSocket().send(gson.toJson(socketsModel));
+        TypingWebSocket.setIhandleWebSocket(new IhandleWebSocket()
+
+        {
+            @Override
+            public void OnMessage(WebSocket socket, String text)
+            {
+                SocketsModel socketsModel = gson.fromJson(text,SocketsModel.class);
+
+                if(socketsModel==null)
+                {
+                    return;
+                }
+
+                String service = socketsModel.getService();
+                boolean typing = Boolean.parseBoolean(socketsModel.getStatus());
+                if(service.equals("typing")&&typing)
+                {
+                    UiHandler.runOnUIThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getContext().getString(R.string.typing));
+
+                        }
+                    });
+                }
+                else if(service.equals("typing")&&!typing)
+                {
+                    if(socketsModel.getFromPhoneNumber().equals(fromPhoneNumber))
+                    {
+                        getContactOnline();
+                    }
+                }
+            }
+
+            @Override
+            public void OnOpen(WebSocket webSocket, okhttp3.Response response)
+            {
+
+            }
+
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason)
+            {
+
+            }
+        });
     }
 
 }

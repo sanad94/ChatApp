@@ -8,7 +8,7 @@ import okhttp3.WebSocket;
  * Created by 2017 on 13/05/2017.
  */
 
-public class SingleWebSocket
+public class OnlineWebSocket
 {
     private static MyWebSocket listener  ;
     private static WebSocket socket ;

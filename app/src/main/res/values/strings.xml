@@ -7,6 +7,7 @@
     <string name="online">online</string>
     <string name="text_contacts">contacts</string>
     <string name="login_validation">This field can not be blank</string>
+    <string name="typing">Typing...</string>
     <string name="server_validation">we are sorry try again later</string>
     <string name="internet_connection">no internet connection</string>
     <string name="deactivateAccount">Deactivate</string>
