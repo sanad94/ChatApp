@@ -15,12 +15,14 @@ public class OnlineWebSocket
     private static  OkHttpClient client;
     private static Request request;
     public static int RECONECT_FLAG = 1;
+    private static IhandleWebSocket previoushandlerSocket;
 
     public static MyWebSocket getInstance(int flag,IhandleWebSocket handleSocket )
     {
         // using flag to reconnect to the socket
         if(listener==null ||flag == RECONECT_FLAG )
         {
+            previoushandlerSocket = handleSocket;
             client = new OkHttpClient();
              request = new Request.Builder().url(BaseUrl.BASE_URL_WEB_SOCKET).build();
              listener = new MyWebSocket(handleSocket);
@@ -34,8 +36,14 @@ public class OnlineWebSocket
     {
         listener.setHandleMessage(handleSocket);
     }
+
     public static WebSocket getSocket()
     {
         return socket;
+    }
+
+    public static void setPreviousIhandleWebSocket()
+    {
+        listener.setHandleMessage(previoushandlerSocket);
     }
 }

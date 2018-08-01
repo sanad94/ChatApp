@@ -125,6 +125,7 @@ public class MessagesFragment extends Fragment
         setToolbarTitleToAppName();
         setAdjustPan();
         TypingWebSocket.setPreviousIhandleWebSocket();
+        OnlineWebSocket.setPreviousIhandleWebSocket();
     }
 
     private void getContactOnline()
