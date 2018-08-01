@@ -1,5 +1,7 @@
 package com.example.a2017.chatapp.Models;
 
+import com.google.gson.annotations.SerializedName;
+
 import io.realm.RealmObject;
 
 /**
@@ -11,16 +13,21 @@ public class Messages extends RealmObject
     private String time;
     private boolean isRead;
     private String fromPhoneNumber;
+    private String uuid;
+    private String status;
+
     public Messages()
     {
     }
 
-    public Messages(String fromPhoneNumber, boolean isRead, String time, String message)
+    public Messages(String message, String time, boolean isRead, String fromPhoneNumber, String uuid, String status)
     {
-        this.fromPhoneNumber = fromPhoneNumber;
-        this.isRead = isRead;
-        this.time = time;
         this.message = message;
+        this.time = time;
+        this.isRead = isRead;
+        this.fromPhoneNumber = fromPhoneNumber;
+        this.uuid = uuid;
+        this.status = status;
     }
 
     public String getMessage()
@@ -58,6 +65,22 @@ public class Messages extends RealmObject
 
     public void setFromPhoneNumber(String fromPhoneNumber) {
         this.fromPhoneNumber = fromPhoneNumber;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

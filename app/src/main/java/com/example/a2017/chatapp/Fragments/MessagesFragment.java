@@ -41,6 +41,8 @@ import com.example.a2017.chatapp.Utils.Preferences;
 import com.example.a2017.chatapp.Utils.UiHandler;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.UUID;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
@@ -198,11 +200,13 @@ public class MessagesFragment extends Fragment
         if(requestCode==IMAGE_REQUEST_CODE && data!=null)
         {
             Uri imageUri = data.getData();
+            UUID uuid = UUID.randomUUID();
             Intent imageServiceIntent = new Intent(getContext(),ImageService.class);
             imageServiceIntent.putExtra("check",false);
             imageServiceIntent.putExtra("imageUri",imageUri.toString());
             imageServiceIntent.putExtra("myPhoneNumber",myPhoneNumber);
             imageServiceIntent.putExtra("toPhoneNumber",fromPhoneNumber);
+            imageServiceIntent.putExtra("uuid",uuid.toString());
             getActivity().startService(imageServiceIntent);
 /*            Calendar c = Calendar.getInstance();
             SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
@@ -210,8 +214,8 @@ public class MessagesFragment extends Fragment
             String time = "";
             String tempMessage ="ImageMessage:";
             tempMessage =  tempMessage + imageUri.toString();
-            final Messages messageToSave = new Messages(myPhoneNumber,true,time,tempMessage);
-            final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,tempMessage,time);
+            final Messages messageToSave = new Messages(tempMessage,time,true,myPhoneNumber,uuid.toString(),"");
+            final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,time,tempMessage,uuid.toString());
             messages.add(messageToSave);
             messagesAdapter.setMessages(messages);
             messagesAdapter.notifyDataSetChanged();
@@ -249,8 +253,9 @@ public class MessagesFragment extends Fragment
 //                    String time = dateformat.format(c.getTime());
                     String time ="";
                     tempMessage ="TextMessage:" + tempMessage;
-                    final Messages messageToSave = new Messages(myPhoneNumber,true,time,tempMessage);
-                    final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,tempMessage,time);
+                    UUID uuid = UUID.randomUUID();
+                    final Messages messageToSave = new Messages(tempMessage,time,true,myPhoneNumber,uuid.toString(),"");
+                    final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,time,tempMessage,uuid.toString());
                     messages.add(messageToSave);
                     messagesAdapter.setMessages(messages);
                     messagesAdapter.notifyDataSetChanged();

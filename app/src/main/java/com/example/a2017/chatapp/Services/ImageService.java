@@ -33,6 +33,7 @@ public class ImageService extends IntentService
     private Uri imageUri;
     private String myPhoneNumber;
     private String toPhoneNumber;
+    private String uuid;
     public static final String ACTION ="com.example.a2017.chatapp.services.imageService";
     private boolean isRunning = false;
     private boolean checkRunning = false;
@@ -70,6 +71,7 @@ public class ImageService extends IntentService
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onHandleIntent(Intent intent)
     {
@@ -78,6 +80,7 @@ public class ImageService extends IntentService
             imageUri = Uri.parse(intent.getStringExtra("imageUri"));
             myPhoneNumber = intent.getStringExtra("myPhoneNumber");
             toPhoneNumber = intent.getStringExtra("toPhoneNumber");
+            uuid = intent.getStringExtra("uuid");
             convertImageTobytes(imageUri);
             Log.d("onHandleIntent", "done");
         }
@@ -162,7 +165,7 @@ public class ImageService extends IntentService
         SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
         String time = dateformat.format(c.getTime());*/
         String time = "";
-        ImageMessageOverNetwork message = new ImageMessageOverNetwork(myPhoneNumber,toPhoneNumber,time,imageByte.getImage());
+        ImageMessageOverNetwork message = new ImageMessageOverNetwork(myPhoneNumber,toPhoneNumber,time,imageByte.getImage(),uuid);
         ApiInterfaceRetrofit retrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
         Call<Void> upload = retrofit.sendImageMessage(message);
         upload.enqueue(new Callback<Void>()

@@ -36,6 +36,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     private ChatRoom room;
     private Runnable runnable;
     private Handler handler;
+    private String uuid;
     private String phoneNumber,message,time;
     private boolean isInChatRoom;
     private boolean isInbackground;
@@ -49,6 +50,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
             phoneNumber = remoteMessage.getData().get("fromPhoneNumber");
             message = remoteMessage.getData().get("message");
             time = remoteMessage.getData().get("time");
+            uuid = remoteMessage.getData().get("uuid");
             isInChatRoom = Preferences.isInChatRoom(getBaseContext());
             isInbackground = Preferences.isInbackground(getBaseContext());
             addToRealm();
@@ -116,7 +118,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
 
         realm.executeTransaction(new Realm.Transaction()
         {
-            Messages messageObject = new Messages(phoneNumber,false,time,message);
+            Messages messageObject = new Messages(message,time,false,phoneNumber,uuid,"");
             RealmList<Messages> messagesList;
 
             @Override
