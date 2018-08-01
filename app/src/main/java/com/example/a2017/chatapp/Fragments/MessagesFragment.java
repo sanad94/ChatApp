@@ -215,7 +215,7 @@ public class MessagesFragment extends Fragment
             String tempMessage ="ImageMessage:";
             tempMessage =  tempMessage + imageUri.toString();
             final Messages messageToSave = new Messages(tempMessage,time,true,myPhoneNumber,uuid.toString(),"");
-            final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,time,tempMessage,uuid.toString());
+            final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,time,tempMessage,uuid.toString(),"");
             messages.add(messageToSave);
             messagesAdapter.setMessages(messages);
             messagesAdapter.notifyDataSetChanged();
@@ -255,7 +255,7 @@ public class MessagesFragment extends Fragment
                     tempMessage ="TextMessage:" + tempMessage;
                     UUID uuid = UUID.randomUUID();
                     final Messages messageToSave = new Messages(tempMessage,time,true,myPhoneNumber,uuid.toString(),"");
-                    final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,time,tempMessage,uuid.toString());
+                    final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,myPhoneNumber,time,tempMessage,uuid.toString(),"");
                     messages.add(messageToSave);
                     messagesAdapter.setMessages(messages);
                     messagesAdapter.notifyDataSetChanged();

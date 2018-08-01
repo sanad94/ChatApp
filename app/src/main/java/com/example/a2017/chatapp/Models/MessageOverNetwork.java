@@ -17,17 +17,20 @@ public class MessageOverNetwork
     private String message;
     @SerializedName("uuid")
     private String uuid;
+    @SerializedName("status")
+    private String status;
 
     public MessageOverNetwork()
     {
     }
 
-    public MessageOverNetwork(String fromPhoneNumber, String toPhoneNumber, String time, String message, String uuid) {
+    public MessageOverNetwork(String fromPhoneNumber, String toPhoneNumber, String time, String message, String uuid,String status) {
         this.fromPhoneNumber = fromPhoneNumber;
         this.toPhoneNumber = toPhoneNumber;
         this.time = time;
         this.message = message;
         this.uuid = uuid;
+        this.status = status;
     }
 
     public String getFromPhoneNumber() {
@@ -71,5 +74,13 @@ public class MessageOverNetwork
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
