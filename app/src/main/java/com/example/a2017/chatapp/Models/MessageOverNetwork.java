@@ -7,6 +7,11 @@ import com.google.gson.annotations.SerializedName;
  */
 public class MessageOverNetwork
 {
+    public static int TOSERVER = 1 ;
+    public static int SENT = 2 ;
+    public static int DELIVERED = 3 ;
+    public static int READ = 4 ;
+
     @SerializedName("fromPhoneNumber")
     private String fromPhoneNumber;
     @SerializedName("toPhoneNumber")
@@ -18,13 +23,13 @@ public class MessageOverNetwork
     @SerializedName("uuid")
     private String uuid;
     @SerializedName("status")
-    private String status;
+    private int status;
 
     public MessageOverNetwork()
     {
     }
 
-    public MessageOverNetwork(String fromPhoneNumber, String toPhoneNumber, String time, String message, String uuid,String status) {
+    public MessageOverNetwork(String fromPhoneNumber, String toPhoneNumber, String time, String message, String uuid,int status) {
         this.fromPhoneNumber = fromPhoneNumber;
         this.toPhoneNumber = toPhoneNumber;
         this.time = time;
@@ -76,11 +81,11 @@ public class MessageOverNetwork
         this.uuid = uuid;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 }

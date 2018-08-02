@@ -1,9 +1,11 @@
 package com.example.a2017.chatapp.RecyclerAdapters;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
@@ -37,16 +39,19 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     private int isMe_imageMessage = 101;
     private int isMe_textMessage = 102;
     private Realm realm;
+    private boolean isMeflag = true ;
     class ViewHolder extends RecyclerView.ViewHolder
     {
         TextView message , time ;
         SimpleDraweeView image ;
+        ImageView status ;
         public ViewHolder(View itemView)
         {
             super(itemView);
             image = (SimpleDraweeView) itemView.findViewById(R.id.imageMessage);
             message= (TextView) itemView.findViewById(R.id.message);
             time= (TextView) itemView.findViewById(R.id.time);
+            status = (ImageView) itemView.findViewById(R.id.status);
         }
     }
 
@@ -84,6 +89,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position)
     {
        final Messages message = messages.get(position);
+        if(message==null)
+            return;
         if(!message.isRead())
         {
             realm.executeTransaction(new Realm.Transaction()
@@ -92,12 +99,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 public void execute(Realm realm)
                 {
                     message.setRead(true);
-                    message.setStatus("read");
+                    message.setStatus(Messages.READ);
                 }
             });
+            final MessageOverNetwork messageToSend = new MessageOverNetwork(fromPhoneNumber,toPhoneNumber,message.getTime(),message.getMessage(),message.getUuid(),MessageOverNetwork.READ);
+            sendMessageToserver(messageToSend);
         }
-        final MessageOverNetwork messageToSend = new MessageOverNetwork(toPhoneNumber,message.getFromPhoneNumber(),message.getTime(),message.getMessage(),message.getUuid(),"read");
-        sendMessageToserver(messageToSend);
+
         SimpleDateFormat timeformat = new SimpleDateFormat("hh:mm aa");
         SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
         try
@@ -125,6 +133,28 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         {
             holder.message.setText(message.getMessage().replace("TextMessage:",""));
         }
+        String s = message.getFromPhoneNumber();
+        if(message.getFromPhoneNumber().equals(fromPhoneNumber))
+        {
+            if(!holder.status.equals(""))
+            {
+                holder.status.setVisibility(View.VISIBLE);
+            }
+            if(message.getStatus()==Messages.SENT)
+            {
+                holder.status.setImageResource(R.mipmap.baseline_done_black_18);
+            }
+            else if(message.getStatus()==Messages.DELIVERED)
+            {
+                holder.status.setImageResource(R.mipmap.baseline_done_all_black_18);
+            }
+            else if(message.getStatus()==Messages.READ)
+            {
+                holder.status.setImageResource(R.mipmap.baseline_done_all_black_18);
+                holder.status.setColorFilter(ContextCompat.getColor(holder.status.getContext(), R.color.colorAccent), android.graphics.PorterDuff.Mode.MULTIPLY);
+            }
+        }
+
 
     }
 
@@ -140,6 +170,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
      if(messages.get(position).getFromPhoneNumber().equals(fromPhoneNumber))
      {
+         isMeflag = true;
       if(messages.get(position).getMessage().contains("ImageMessage:"))
       {
           return isMe_imageMessage;
@@ -148,6 +179,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
      }
      else
      {
+         isMeflag = false;
          if(messages.get(position).getMessage().contains("ImageMessage:"))
          {
              return imageMessage;

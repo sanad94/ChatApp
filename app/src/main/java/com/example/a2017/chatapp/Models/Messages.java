@@ -3,24 +3,31 @@ package com.example.a2017.chatapp.Models;
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by 2017 on 04/02/2017.
  */
 public class Messages extends RealmObject
 {
+    public static int TOSERVER = 1 ;
+    public static int SENT = 2 ;
+    public static int DELIVERED = 3 ;
+    public static int READ = 4 ;
+
     private String message;
     private String time;
     private boolean isRead;
     private String fromPhoneNumber;
+    @PrimaryKey
     private String uuid;
-    private String status;
+    private int status;
 
     public Messages()
     {
     }
 
-    public Messages(String message, String time, boolean isRead, String fromPhoneNumber, String uuid, String status)
+    public Messages(String message, String time, boolean isRead, String fromPhoneNumber, String uuid, int status)
     {
         this.message = message;
         this.time = time;
@@ -75,11 +82,11 @@ public class Messages extends RealmObject
         this.uuid = uuid;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

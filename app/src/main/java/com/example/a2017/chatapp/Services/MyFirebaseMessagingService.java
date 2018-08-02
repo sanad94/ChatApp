@@ -43,14 +43,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     private Runnable runnable;
     private Handler handler;
     private String uuid;
-    private String status;
+    private int status;
     private String phoneNumber,message,time;
     private boolean isInChatRoom;
     private boolean isInbackground;
-    private String myPhoneNumber = Preferences.getMyPhoneNumber(getBaseContext());
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage)
     {
+        String myPhoneNumber = Preferences.getMyPhoneNumber(getBaseContext());
         try
         {
             realm = Realm.getDefaultInstance();
@@ -58,20 +59,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
             message = remoteMessage.getData().get("message");
             time = remoteMessage.getData().get("time");
             uuid = remoteMessage.getData().get("uuid");
-            status = remoteMessage.getData().get("status");
+            status = Integer.valueOf(remoteMessage.getData().get("status"));
             isInChatRoom = Preferences.isInChatRoom(getBaseContext());
             isInbackground = Preferences.isInbackground(getBaseContext());
             Messages obj = realm.where(Messages.class).equalTo("uuid", uuid).findFirst();
             if(obj==null)
             {
                 addToRealm();
-                final MessageOverNetwork messageToSend = new MessageOverNetwork(phoneNumber,myPhoneNumber,time,message,uuid,"delivered");
+                final MessageOverNetwork messageToSend = new MessageOverNetwork(myPhoneNumber,phoneNumber,time,message,uuid,MessageOverNetwork.DELIVERED);
                 sendMessageToserver(messageToSend);
             }
-            else
+            else if(status > obj.getStatus())
             {
-                obj.setStatus(status);
-                updateMessage(obj);
+                updateMessage(obj,status);
             }
 
             if(!isInbackground)
@@ -85,7 +85,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 {
                     if(MessagesFragment.fromPhoneNumber.equals(phoneNumber))
                     {
-                        updateRoomMessageUi();
+                        updateRoomMessageUi(status);
                     }
                     else
                     {
@@ -101,7 +101,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         }
         catch (Exception e)
         {
-            sendFullNotification(remoteMessage);
+            if (isInbackground)
+                sendFullNotification(remoteMessage);
         }
 
 
@@ -138,7 +139,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
 
         realm.executeTransaction(new Realm.Transaction()
         {
-            Messages messageObject = new Messages(message,time,false,phoneNumber,uuid,"");
+            Messages messageObject = new Messages(message,time,false,phoneNumber,uuid,Messages.DELIVERED);
             RealmList<Messages> messagesList;
 
             @Override
@@ -196,7 +197,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         handler.post(runnable);
     }
 
-    private void updateRoomMessageUi()
+    private void updateRoomMessageUi(final int status)
     {
         runnable = new Runnable()
         {
@@ -214,7 +215,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                         ArrayList<Messages> messagesArrayList =new ArrayList<>(room.getMessages());
                         MessagesAdapter messagesAdapter =MessagesFragment.messagesAdapter;
                         messagesAdapter.setMessages(messagesArrayList);
-                        messagesAdapter.notifyItemInserted(messagesArrayList.size()-1);
+                        if(status == Messages.TOSERVER)
+                            messagesAdapter.notifyItemInserted(messagesArrayList.size()-1);
+                        else
+                            messagesAdapter.notifyItemRangeChanged(0,messagesArrayList.size()-1);
                         MessagesFragment.recyclerView_message_list.scrollToPosition(messagesArrayList.size()-1);
                     }
                 });
@@ -224,13 +228,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         handler.post(runnable);
     }
 
-    private void updateMessage(final Messages message)
+    private void updateMessage(final Messages message, final int status)
     {
         realm.executeTransaction(new Realm.Transaction()
         {
             @Override
             public void execute(Realm realm)
             {
+                message.setStatus(status);
                 realm.copyToRealmOrUpdate(message);
             }
         });
