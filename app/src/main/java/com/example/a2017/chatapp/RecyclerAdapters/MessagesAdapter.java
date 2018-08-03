@@ -15,6 +15,8 @@ import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Network.BaseUrl;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,14 +46,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     {
         TextView message , time ;
         SimpleDraweeView image ;
-        ImageView status ;
+        SimpleDraweeView status ;
         public ViewHolder(View itemView)
         {
             super(itemView);
             image = (SimpleDraweeView) itemView.findViewById(R.id.imageMessage);
             message= (TextView) itemView.findViewById(R.id.message);
             time= (TextView) itemView.findViewById(R.id.time);
-            status = (ImageView) itemView.findViewById(R.id.status);
+            status = (SimpleDraweeView) itemView.findViewById(R.id.status);
         }
     }
 
@@ -133,28 +135,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         {
             holder.message.setText(message.getMessage().replace("TextMessage:",""));
         }
-        String s = message.getFromPhoneNumber();
-        if(message.getFromPhoneNumber().equals(fromPhoneNumber))
-        {
-            if(!holder.status.equals(""))
-            {
-                holder.status.setVisibility(View.VISIBLE);
-            }
-            if(message.getStatus()==Messages.SENT)
-            {
-                holder.status.setImageResource(R.mipmap.baseline_done_black_18);
-            }
-            else if(message.getStatus()==Messages.DELIVERED)
-            {
-                holder.status.setImageResource(R.mipmap.baseline_done_all_black_18);
-            }
-            else if(message.getStatus()==Messages.READ)
-            {
-                holder.status.setImageResource(R.mipmap.baseline_done_all_black_18);
-                holder.status.setColorFilter(ContextCompat.getColor(holder.status.getContext(), R.color.colorAccent), android.graphics.PorterDuff.Mode.MULTIPLY);
-            }
-        }
 
+        updateMessageStatus(holder,message);
 
     }
 
@@ -217,5 +199,35 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
             }
         });
+    }
+
+    private void updateMessageStatus(ViewHolder holder, Messages message)
+    {
+        int id = 0;
+        ImageRequest imageRequest;
+        if(message.getFromPhoneNumber().equals(fromPhoneNumber))
+        {
+            if(!holder.status.equals(""))
+            {
+               // holder.status.setVisibility(View.VISIBLE);
+              //  holder.status.setImageURI(imageRequest.getSourceUri());
+            }
+            if(message.getStatus()==Messages.SENT)
+            {
+                id = R.mipmap.baseline_done_white_18;
+            }
+            else if(message.getStatus()==Messages.DELIVERED)
+            {
+                id = R.mipmap.baseline_done_all_white_18;
+            }
+            else if(message.getStatus()==Messages.READ)
+            {
+              id = R.drawable.default_image;
+            }
+
+            imageRequest = ImageRequestBuilder.newBuilderWithResourceId(id).build();
+            holder.status.setImageURI(imageRequest.getSourceUri());
+
+        }
     }
 }
