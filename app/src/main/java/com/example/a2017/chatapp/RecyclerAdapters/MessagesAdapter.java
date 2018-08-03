@@ -37,6 +37,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     private ArrayList<Messages> messages ;
     private String fromPhoneNumber;
     private String toPhoneNumber;
+    private Messages myLastMessage;
     private int imageMessage = 100;
     private int isMe_imageMessage = 101;
     private int isMe_textMessage = 102;
@@ -118,7 +119,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         }
         catch (ParseException e)
         {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
         if(message.getMessage().contains("ImageMessage:"))
         {
@@ -181,6 +182,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         return messages;
     }
 
+    public Messages getMyLastMessage() {
+        return myLastMessage;
+    }
+
+    public void setMyLastMessage(Messages myLastMessage) {
+        this.myLastMessage = myLastMessage;
+    }
     private void sendMessageToserver(final MessageOverNetwork messageToSend)
     {
         ApiInterfaceRetrofit apiClientRetrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
@@ -203,14 +211,17 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
     private void updateMessageStatus(ViewHolder holder, Messages message)
     {
+        if(myLastMessage==null)
+            return;
+
         int id = 0;
         ImageRequest imageRequest;
-        if(message.getFromPhoneNumber().equals(fromPhoneNumber))
+        if(message.getUuid().equals(myLastMessage.getUuid()))
         {
-            if(!holder.status.equals(""))
+            if(holder.status.getVisibility() == View.INVISIBLE)
             {
-               // holder.status.setVisibility(View.VISIBLE);
-              //  holder.status.setImageURI(imageRequest.getSourceUri());
+                holder.status.setVisibility(View.VISIBLE);
+
             }
             if(message.getStatus()==Messages.SENT)
             {
@@ -229,5 +240,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             holder.status.setImageURI(imageRequest.getSourceUri());
 
         }
+
     }
 }

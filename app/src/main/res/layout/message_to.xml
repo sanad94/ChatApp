@@ -7,15 +7,27 @@
     android:orientation="horizontal"
     android:paddingTop="5dp"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+   >
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/status"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="1dp"
+        android:paddingTop="6dp"
+        android:paddingRight="6dp"
+        fresco:placeholderImageScaleType="centerCrop"
+        fresco:roundAsCircle="true"
+        fresco:backgroundImage="@color/bubble_blue"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:textIsSelectable="true"
+        android:layout_alignRight="@id/status"
+        android:layout_marginRight="30dp"
         android:background="@drawable/bg_bubble_gray"
         android:textSize="16dp"
         android:textColor="@color/white"/>
@@ -32,29 +44,17 @@
          android:visibility="invisible"
          android:src="@mipmap/baseline_done_black_18"
          /> -->
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/status"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/message"
-        android:layout_marginBottom="1dp"
-        android:layout_marginRight="10dp"
-        android:paddingTop="6dp"
-        fresco:placeholderImageScaleType="centerCrop"
-        fresco:roundAsCircle="true"
-        fresco:backgroundImage="@color/bubble_blue"/>
 
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@id/status"
+        android:layout_alignRight="@id/message"
         android:layout_below="@id/message"
         android:layout_marginBottom="1dp"
-        android:paddingRight="22dp"
         android:paddingTop="6dp"
+        android:text="9:16"
         android:textSize="10dp" />
 
 </RelativeLayout>

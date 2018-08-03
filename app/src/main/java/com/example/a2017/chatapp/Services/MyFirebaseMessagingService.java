@@ -47,11 +47,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     private String phoneNumber,message,time;
     private boolean isInChatRoom;
     private boolean isInbackground;
+    String myPhoneNumber ;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage)
     {
-        String myPhoneNumber = Preferences.getMyPhoneNumber(getBaseContext());
+         myPhoneNumber = Preferences.getMyPhoneNumber(getBaseContext());
         try
         {
             realm = Realm.getDefaultInstance();
@@ -85,7 +86,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 {
                     if(MessagesFragment.fromPhoneNumber.equals(phoneNumber))
                     {
-                        updateRoomMessageUi(status);
+                        updateRoomMessageUi(status,uuid);
                     }
                     else
                     {
@@ -197,7 +198,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         handler.post(runnable);
     }
 
-    private void updateRoomMessageUi(final int status)
+    private void updateRoomMessageUi(final int status,final String uuid)
     {
         runnable = new Runnable()
         {
@@ -215,10 +216,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                         ArrayList<Messages> messagesArrayList =new ArrayList<>(room.getMessages());
                         MessagesAdapter messagesAdapter =MessagesFragment.messagesAdapter;
                         messagesAdapter.setMessages(messagesArrayList);
+                        Messages obj ;
+                        int position = 0 ;
+                        for (int i = messagesArrayList.size()-1 ; i >=0 ; i--)
+                        {
+                            if(messagesArrayList.get(i).getFromPhoneNumber().equals(myPhoneNumber))
+                            {
+                                obj = messagesArrayList.get(i);
+                                position = i;
+                            }
+                        }
                         if(status == Messages.TOSERVER)
                             messagesAdapter.notifyItemInserted(messagesArrayList.size()-1);
                         else
-                            messagesAdapter.notifyItemRangeChanged(0,messagesArrayList.size()-1);
+                        {
+                           // MessagesFragment.recyclerView_message_list.removeViewAt(position);
+                           // messagesAdapter.notifyItemRemoved(position);
+                            //messagesAdapter.notifyItemInserted(position);
+                            messagesAdapter.notifyItemRangeChanged(position, messagesArrayList.size());
+                            //messagesAdapter.notifyItemRangeChanged(0,messagesArrayList.size()-1);
+                        }
                         MessagesFragment.recyclerView_message_list.scrollToPosition(messagesArrayList.size()-1);
                     }
                 });

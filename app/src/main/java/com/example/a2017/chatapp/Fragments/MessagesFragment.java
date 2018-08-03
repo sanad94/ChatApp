@@ -62,6 +62,7 @@ public class MessagesFragment extends Fragment
     public static RecyclerView recyclerView_message_list ;
     public static MessagesAdapter messagesAdapter;
     private ArrayList<Messages> messages;
+    private Messages myLastMessage;
     private ChatRoom room;
     public static String fromPhoneNumber;
     private String myPhoneNumber;
@@ -258,6 +259,7 @@ public class MessagesFragment extends Fragment
                     final MessageOverNetwork messageToSend = new MessageOverNetwork(myPhoneNumber,fromPhoneNumber,time,tempMessage,uuid.toString(),MessageOverNetwork.TOSERVER);
                     messages.add(messageToSave);
                     messagesAdapter.setMessages(messages);
+                    messagesAdapter.setMyLastMessage(messageToSave);
                     messagesAdapter.notifyDataSetChanged();
                     messageEditText.setText("");
                     saveToRelm(messageToSave);
@@ -305,6 +307,7 @@ public class MessagesFragment extends Fragment
                     return;
                 }
                 messages=new ArrayList<>(room.getMessages());
+                myLastMessage = getMyLastMessage(messages);
                 notifyDataSetChanged(messages);
             }
         });
@@ -329,9 +332,20 @@ public class MessagesFragment extends Fragment
         });
 
     }
+    private Messages getMyLastMessage(ArrayList<Messages> messages)
+    {
+        for (int i = messages.size()-1 ; i >=0 ; i--)
+        {
+            if(messages.get(i).getFromPhoneNumber().equals(this.myPhoneNumber))
+                return messages.get(i);
+        }
+        return null;
+    }
+
     private void notifyDataSetChanged(ArrayList<Messages> messages)
     {
         messagesAdapter.setMessages(messages);
+        messagesAdapter.setMyLastMessage(myLastMessage);
         messagesAdapter.notifyDataSetChanged();
     }
 
