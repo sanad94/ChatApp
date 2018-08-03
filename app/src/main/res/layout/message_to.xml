@@ -6,13 +6,12 @@
     android:gravity="right"
     android:orientation="horizontal"
     android:paddingTop="5dp"
-    android:paddingLeft="16dp"
-   >
+    android:paddingLeft="16dp">
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/status"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="1dp"
         android:paddingTop="6dp"
@@ -23,38 +22,27 @@
         android:visibility="invisible"/>
 
     <TextView
-        android:id="@+id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@id/status"
-        android:layout_marginRight="30dp"
-        android:background="@drawable/bg_bubble_gray"
-        android:textSize="16dp"
-        android:textColor="@color/white"/>
-
-    <!--
-     <ImageView
-         android:id="@+id/status"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignRight="@id/message"
-         android:layout_below="@id/message"
-         android:layout_marginBottom="1dp"
-         android:paddingTop="6dp"
-         android:visibility="invisible"
-         android:src="@mipmap/baseline_done_black_18"
-         /> -->
-
-
-    <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@id/message"
-        android:layout_below="@id/message"
-        android:layout_marginBottom="1dp"
+        android:layout_toLeftOf="@+id/status"
+        android:layout_alignTop="@+id/status"
         android:paddingTop="6dp"
         android:text="9:16"
-        android:textSize="10dp" />
+        android:layout_marginRight="15dp" />
 
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/time"
+        android:layout_below="@id/time"
+        android:background="@drawable/sender_bubble"
+        android:textSize="18dp"
+        android:textColor="@color/white"
+        android:maxWidth="240dp"
+        android:padding="15dp"
+        android:elevation="5dp"
+
+        />
 </RelativeLayout>

@@ -260,7 +260,7 @@ public class MessagesFragment extends Fragment
                     messages.add(messageToSave);
                     messagesAdapter.setMessages(messages);
                     messagesAdapter.setMyLastMessage(messageToSave);
-                    messagesAdapter.notifyDataSetChanged();
+                    messagesAdapter.notifyItemInserted(messages.size());
                     messageEditText.setText("");
                     saveToRelm(messageToSave);
                     sendMessageToserver(messageToSend);

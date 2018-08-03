@@ -14,8 +14,11 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
         android:textIsSelectable="true"
-        android:background="@drawable/bg_bubble_white"
-        android:textSize="16dp" />
+        android:background="@drawable/reciver_bubble"
+        android:textSize="18dp"
+        android:maxWidth="240dp"
+        android:padding="15dp"
+        android:elevation="5dp"/>
 
     <TextView
         android:id="@+id/time"
