@@ -219,7 +219,7 @@ public class MessagesFragment extends Fragment
             final MessageOverNetwork messageToSend = new MessageOverNetwork(myPhoneNumber,fromPhoneNumber,time,tempMessage,uuid.toString(),MessageOverNetwork.TOSERVER);
             messages.add(messageToSave);
             messagesAdapter.setMessages(messages);
-            messagesAdapter.notifyDataSetChanged();
+            messagesAdapter.notifyItemInserted(messages.size());
             saveToRelm(messageToSave);
             recyclerView_message_list.scrollToPosition(messages.size()-1);
         }

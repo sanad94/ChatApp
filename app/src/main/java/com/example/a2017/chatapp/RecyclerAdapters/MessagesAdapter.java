@@ -1,5 +1,6 @@
 package com.example.a2017.chatapp.RecyclerAdapters;
 
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,18 +16,24 @@ import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Network.BaseUrl;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-
+import java.io.File;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Url;
+
+import com.facebook.*;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Created by 2017 on 04/02/2017.
@@ -121,23 +128,24 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         {
            // e.printStackTrace();
         }
-        if(message.getMessage().contains("ImageMessage:"))
+        if(isMeflag && message.getMessage().contains("ImageMessage") && message.getStatus() == Messages.TOSERVER)
         {
-            if(messages.get(position).getFromPhoneNumber().equals(fromPhoneNumber))
-            {
-                holder.image.setImageURI(message.getMessage().replace("ImageMessage:", ""));
-            }
-            else
-            {
-                holder.image.setImageURI(BaseUrl.BASE_URL_ROOM_IMAGE+message.getMessage().replace("ImageMessage:", "")+"/"+fromPhoneNumber+"/"+toPhoneNumber);
-            }
+            String loclaPath = message.getMessage().replace("ImageMessage:", "");
+            holder.image.setImageURI(loclaPath);
+
+        }
+        if(message.getMessage().contains("ImageMessage"))
+        {
+
+            holder.image.setImageURI(BaseUrl.BASE_URL_ROOM_IMAGE+message.getMessage().replace("ImageMessage:", "")+"/"+fromPhoneNumber+"/"+toPhoneNumber);
+
         }
         else
         {
             holder.message.setText(message.getMessage().replace("TextMessage:",""));
         }
 
-        updateMessageStatus(holder,message);
+    //  updateMessageStatus(holder,message);
 
     }
 

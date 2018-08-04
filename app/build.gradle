@@ -35,7 +35,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.facebook.fresco:fresco:1.1.0'
+    compile 'com.facebook.fresco:fresco:1.10.0'
     compile 'com.github.tamir7.contacts:contacts:1.1.4'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'

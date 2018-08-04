@@ -72,7 +72,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
             }
             else if(status > obj.getStatus())
             {
-                updateMessage(obj,status);
+                updateMessage(obj,status,message);
             }
 
             if(!isInbackground)
@@ -245,7 +245,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
         handler.post(runnable);
     }
 
-    private void updateMessage(final Messages message, final int status)
+    private void updateMessage(final Messages message, final int status ,final String msg)
     {
         realm.executeTransaction(new Realm.Transaction()
         {
@@ -253,6 +253,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
             public void execute(Realm realm)
             {
                 message.setStatus(status);
+                message.setMessage(msg);
                 realm.copyToRealmOrUpdate(message);
             }
         });
