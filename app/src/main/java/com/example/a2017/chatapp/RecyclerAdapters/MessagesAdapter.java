@@ -132,9 +132,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         }
         if(isMeflag && message.getMessage().contains("ImageMessage") && message.getStatus() == Messages.TOSERVER)
         {
-//            String loclaPath = message.getMessage().replace("ImageMessage:", "");
-//            holder.image.setImageURI(UriUtil.getRealPathFromUri(holder.image.getContext().getContentResolver(),loclaPath));
-
+            String loclaPath = message.getMessage().replace("ImageMessage:", "");
+            holder.image.setImageURI(loclaPath);
         }
         if(message.getMessage().contains("ImageMessage"))
         {
