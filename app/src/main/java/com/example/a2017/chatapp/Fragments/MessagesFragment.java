@@ -151,7 +151,7 @@ public class MessagesFragment extends Fragment
                 }
                 String service = online.getService();
                 String title = "";
-                if(service.equals("IsConnected"))
+                if(service.equals("IsConnected") && online.getFromPhoneNumber().equals(fromPhoneNumber))
                 {
 
                     if(online.getStatus().equals("online"))
@@ -166,7 +166,7 @@ public class MessagesFragment extends Fragment
                     }
 
                 }
-                else if(service.equals("OffLine"))
+                else if(service.equals("OffLine") && online.getFromPhoneNumber().equals(fromPhoneNumber))
                 {
                     title = getContext().getString(R.string.last_seen) + online.getStatus();
                 }
