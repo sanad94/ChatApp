@@ -8,24 +8,34 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/imageMessage"
-        android:layout_alignParentLeft="true"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/bg_bubble_white"
-        fresco:placeholderImageScaleType="centerCrop"
-        />
-
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/imageMessage"
         android:layout_marginBottom="1dp"
         android:paddingTop="6dp"
-        android:textSize="10dp" />
+       android:text="1:19" />
+
+    android:layout_below="@id/imageMessage"
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/imageMessage"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_alignLeft="@id/time"
+        android:layout_below="@id/time"
+        android:textColor="@color/white"
+        android:maxWidth="250dp"
+        android:padding="15dp"
+        android:elevation="5dp"
+        fresco:placeholderImageScaleType="centerCrop"
+        android:background="@drawable/reciver_bubble"
+        fresco:roundedCornerRadius="20dp"
+        fresco:roundTopLeft="false"
+        fresco:roundingBorderColor="@color/bg_bubble_self"
+        />
+
+
+
 </RelativeLayout>

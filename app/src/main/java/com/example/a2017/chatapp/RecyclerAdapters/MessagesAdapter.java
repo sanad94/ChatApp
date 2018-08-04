@@ -1,5 +1,6 @@
 package com.example.a2017.chatapp.RecyclerAdapters;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.example.a2017.chatapp.Network.ApiClientRetrofit;
 import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.Network.BaseUrl;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
@@ -130,8 +132,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         }
         if(isMeflag && message.getMessage().contains("ImageMessage") && message.getStatus() == Messages.TOSERVER)
         {
-            String loclaPath = message.getMessage().replace("ImageMessage:", "");
-            holder.image.setImageURI(loclaPath);
+//            String loclaPath = message.getMessage().replace("ImageMessage:", "");
+//            holder.image.setImageURI(UriUtil.getRealPathFromUri(holder.image.getContext().getContentResolver(),loclaPath));
 
         }
         if(message.getMessage().contains("ImageMessage"))
@@ -145,7 +147,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             holder.message.setText(message.getMessage().replace("TextMessage:",""));
         }
 
-    //  updateMessageStatus(holder,message);
+        updateMessageStatus(holder,message);
 
     }
 
