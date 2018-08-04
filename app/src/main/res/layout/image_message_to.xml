@@ -47,7 +47,7 @@
         fresco:roundedCornerRadius="20dp"
         fresco:roundTopRight="false"
         fresco:roundingBorderColor="@color/bubble_blue"
-        />
+        fresco:failureImage="@drawable/default_image"/>
 
 
 </RelativeLayout>

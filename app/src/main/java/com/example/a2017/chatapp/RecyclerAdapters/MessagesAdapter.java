@@ -235,18 +235,21 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             if(message.getStatus()==Messages.SENT)
             {
                 id = R.mipmap.baseline_done_white_18;
+                imageRequest = ImageRequestBuilder.newBuilderWithResourceId(id).build();
+                holder.status.setImageURI(imageRequest.getSourceUri());
             }
             else if(message.getStatus()==Messages.DELIVERED)
             {
                 id = R.mipmap.baseline_done_all_white_18;
+                imageRequest = ImageRequestBuilder.newBuilderWithResourceId(id).build();
+                holder.status.setImageURI(imageRequest.getSourceUri());
             }
             else if(message.getStatus()==Messages.READ)
             {
-              id = R.drawable.default_image;
+                holder.status.setImageURI(BaseUrl.BASE_URL_IMAGE+fromPhoneNumber);
             }
 
-            imageRequest = ImageRequestBuilder.newBuilderWithResourceId(id).build();
-            holder.status.setImageURI(imageRequest.getSourceUri());
+
 
         }
 

@@ -20,7 +20,8 @@
         android:layout_height="50dp"
         fresco:placeholderImageScaleType="centerCrop"
         android:layout_alignParentRight="true"
-        fresco:roundAsCircle="true" />
+        fresco:roundAsCircle="true"
+        fresco:failureImage="@drawable/default_image"        />
         <!---->
     <TextView
         android:layout_width="match_parent"

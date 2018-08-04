@@ -19,7 +19,8 @@
         fresco:placeholderImageScaleType="centerCrop"
         fresco:roundAsCircle="true"
         fresco:backgroundImage="@color/bubble_blue"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        fresco:failureImage="@drawable/default_image"/>
 
     <TextView
         android:id="@+id/time"
