@@ -161,10 +161,10 @@ public class ImageService extends IntentService
     {
         Gson gson = new Gson();
         Log.d("SendImageMessage",gson.toJson(imageByte));
-/*        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
         SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-        String time = dateformat.format(c.getTime());*/
-        String time = "";
+        String time = dateformat.format(c.getTime());
+     //   String time = "";
         ImageMessageOverNetwork message = new ImageMessageOverNetwork(myPhoneNumber,toPhoneNumber,time,imageByte.getImage(),uuid);
         ApiInterfaceRetrofit retrofit = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
         Call<Void> upload = retrofit.sendImageMessage(message);

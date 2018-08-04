@@ -4,6 +4,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -209,10 +211,10 @@ public class MessagesFragment extends Fragment
             imageServiceIntent.putExtra("toPhoneNumber",fromPhoneNumber);
             imageServiceIntent.putExtra("uuid",uuid.toString());
             getActivity().startService(imageServiceIntent);
-/*            Calendar c = Calendar.getInstance();
+            Calendar c = Calendar.getInstance();
             SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-            String time = dateformat.format(c.getTime());*/
-            String time = "";
+            String time = dateformat.format(c.getTime());
+          //  String time = "";
             String tempMessage ="ImageMessage:";
             tempMessage =  tempMessage + imageUri.toString();
             final Messages messageToSave = new Messages(tempMessage,time,true,myPhoneNumber,uuid.toString(),Messages.TOSERVER);
@@ -249,10 +251,10 @@ public class MessagesFragment extends Fragment
                 if(!tempMessage.matches(""))
                 {
                     //"06-feb-2018 06:74 pm"
-//                    Calendar c = Calendar.getInstance();
-//                    SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-//                    String time = dateformat.format(c.getTime());
-                    String time ="";
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
+                    String time = dateformat.format(c.getTime());
+                  //  String time ="";
                     tempMessage ="TextMessage:" + tempMessage;
                     UUID uuid = UUID.randomUUID();
                     final Messages messageToSave = new Messages(tempMessage,time,true,myPhoneNumber,uuid.toString(),Messages.TOSERVER);
