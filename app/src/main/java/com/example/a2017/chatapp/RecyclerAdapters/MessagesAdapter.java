@@ -145,7 +145,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         {
             holder.message.setText(message.getMessage().replace("TextMessage:",""));
         }
-
+        boolean x = false;
+        if(position == 0)
+        {
+            x = hasObservers();
+        }
         updateMessageStatus(holder,message);
 
     }
@@ -225,6 +229,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         int id = 0;
         ImageRequest imageRequest;
+
+        if(isMeflag && holder.status.getVisibility()==View.VISIBLE)
+        {
+            holder.status.setVisibility(View.INVISIBLE);
+        }
+
         if(message.getUuid().equals(myLastMessage.getUuid()))
         {
             if(holder.status.getVisibility() == View.INVISIBLE)
