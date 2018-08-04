@@ -110,6 +110,7 @@ public class MessagesFragment extends Fragment
     public void onStart()
     {
         super.onStart();
+        Preferences.setIsInChatRoom(true,getContext());
         getFromRealm();
     }
 
@@ -117,7 +118,7 @@ public class MessagesFragment extends Fragment
     public void onPause()
     {
         super.onPause();
-        Preferences.setIsInChatRoom(false,getContext());
+       Preferences.setIsInChatRoom(false,getContext());
     }
 
     @Override

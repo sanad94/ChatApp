@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.a2017.chatapp.Models.MessageOverNetwork;
@@ -57,6 +58,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         TextView message , time ;
         SimpleDraweeView image ;
         SimpleDraweeView status ;
+        ProgressBar imageProgress  ;
         public ViewHolder(View itemView)
         {
             super(itemView);
@@ -64,6 +66,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             message= (TextView) itemView.findViewById(R.id.message);
             time= (TextView) itemView.findViewById(R.id.time);
             status = (SimpleDraweeView) itemView.findViewById(R.id.status);
+            imageProgress = (ProgressBar) itemView.findViewById(R.id.imageUplod);
         }
     }
 
@@ -134,12 +137,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         {
             String loclaPath = message.getMessage().replace("ImageMessage:", "");
             holder.image.setImageURI(loclaPath);
+            holder.imageProgress.setVisibility(View.VISIBLE);
         }
         else if(message.getMessage().contains("ImageMessage"))
         {
 
             holder.image.setImageURI(BaseUrl.BASE_URL_ROOM_IMAGE+message.getMessage().replace("ImageMessage:", "")+"/"+fromPhoneNumber+"/"+toPhoneNumber);
-
+            if(isMeflag && holder.imageProgress.getVisibility()==View.VISIBLE)
+                holder.imageProgress.setVisibility(View.INVISIBLE);
         }
         else
         {

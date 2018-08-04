@@ -49,5 +49,13 @@
         fresco:roundingBorderColor="@color/bubble_blue"
         fresco:failureImage="@drawable/default_image"/>
 
+    <ProgressBar
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/imageUplod"
+        android:layout_alignRight="@id/imageMessage"
+        android:layout_below="@id/imageMessage"
+        android:indeterminateTintMode="src_atop"
+        />
 
 </RelativeLayout>
