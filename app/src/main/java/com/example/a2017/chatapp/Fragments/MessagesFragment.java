@@ -82,7 +82,6 @@ public class MessagesFragment extends Fragment
         super.onCreate(savedInstanceState);
         realm= Realm.getDefaultInstance();
         getArgument();
-        Preferences.setIsInChatRoom(true,getContext());
     }
 
     @Nullable
