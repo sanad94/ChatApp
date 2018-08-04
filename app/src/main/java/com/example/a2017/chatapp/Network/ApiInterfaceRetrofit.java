@@ -29,8 +29,8 @@ public interface ApiInterfaceRetrofit
     @POST("PushMessage")
     Call<MessageOverNetwork> sendMessage (@Body MessageOverNetwork mymessage);
 
-    @POST("SendContactList")
-    Call<ArrayList<MyContacts>> sendContact (@Body ArrayList<MyContacts> myContact);
+    @POST("SendContactList/{phoneNumber}")
+    Call<ArrayList<MyContacts>> sendContact (  @Path("phoneNumber") String phoneNumbe , @Body ArrayList<MyContacts> myContact);
 
     @GET("DeleteUser/{phoneNumber}")
     Call<Void> deactivateAccount (@Path("phoneNumber") String myPhoneNumber);

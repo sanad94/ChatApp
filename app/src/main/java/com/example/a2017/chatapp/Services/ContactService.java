@@ -7,6 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.example.a2017.chatapp.Models.MyContacts;
 import com.example.a2017.chatapp.Network.ApiClientRetrofit;
 import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
+import com.example.a2017.chatapp.Utils.Preferences;
 import com.github.tamir7.contacts.Contact;
 import com.github.tamir7.contacts.Contacts;
 import com.github.tamir7.contacts.Query;
@@ -80,8 +81,9 @@ public class ContactService extends IntentService
 
     private void sendContactToserver(final ArrayList<MyContacts> contacts)
     {
+        String myNumber = Preferences.getMyPhoneNumber(getBaseContext());
         ApiInterfaceRetrofit apiClient = ApiClientRetrofit.getClient().create(ApiInterfaceRetrofit.class);
-        Call<ArrayList<MyContacts>> contactList = apiClient.sendContact(contacts);
+        Call<ArrayList<MyContacts>> contactList = apiClient.sendContact(myNumber,contacts);
         contactList.enqueue(new Callback<ArrayList<MyContacts>>() {
             @Override
             public void onResponse(Call<ArrayList<MyContacts>> call, Response<ArrayList<MyContacts>> response)
