@@ -117,6 +117,7 @@ public class MessagesFragment extends Fragment
     public void onPause()
     {
         super.onPause();
+        sendMessageToSocket(" ");
        Preferences.setIsInChatRoom(false,getContext());
     }
 
@@ -467,23 +468,9 @@ public class MessagesFragment extends Fragment
         @Override
         public void afterTextChanged(Editable s)
         {
-            String str = s.toString().trim();
-            final Gson gson = new Gson();
-            SocketsModel socketsModel = new SocketsModel();
-            if(str.equals(""))
-            {
-                socketsModel.setStatus("false");
-            }
-            else
-            {
-                socketsModel.setStatus("true");
-            }
-            socketsModel.setService("typing");
-            socketsModel.setFromPhoneNumber(myPhoneNumber);
-            socketsModel.setToPhoneNumber(fromPhoneNumber);
-            SocketsFactory.getSocket(SocketEnum.TYPING.name()).getSocket().send(gson.toJson(socketsModel));
 
 
+            sendMessageToSocket(s.toString());
 
         }
     };
@@ -545,6 +532,25 @@ public class MessagesFragment extends Fragment
 
             }
         });
+    }
+
+    private void sendMessageToSocket(String s)
+    {
+        String str = s.toString().trim();
+        final Gson gson = new Gson();
+        SocketsModel socketsModel = new SocketsModel();
+        if(str.equals(""))
+        {
+            socketsModel.setStatus("false");
+        }
+        else
+        {
+            socketsModel.setStatus("true");
+        }
+        socketsModel.setService("typing");
+        socketsModel.setFromPhoneNumber(myPhoneNumber);
+        socketsModel.setToPhoneNumber(fromPhoneNumber);
+        SocketsFactory.getSocket(SocketEnum.TYPING.name()).getSocket().send(gson.toJson(socketsModel));
     }
 
 }
