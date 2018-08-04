@@ -135,7 +135,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             String loclaPath = message.getMessage().replace("ImageMessage:", "");
             holder.image.setImageURI(loclaPath);
         }
-        if(message.getMessage().contains("ImageMessage"))
+        else if(message.getMessage().contains("ImageMessage"))
         {
 
             holder.image.setImageURI(BaseUrl.BASE_URL_ROOM_IMAGE+message.getMessage().replace("ImageMessage:", "")+"/"+fromPhoneNumber+"/"+toPhoneNumber);
