@@ -161,8 +161,14 @@ public class MessagesFragment extends Fragment
                     }
                     else
                     {
+
                         title = getContext().getString(R.string.last_seen)+online.getStatus();
                     }
+
+                }
+                else if(service.equals("OffLine"))
+                {
+                    title = getContext().getString(R.string.last_seen) + online.getStatus();
                 }
 
                 final String f_title = title;
