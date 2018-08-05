@@ -40,7 +40,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
 {
     private Realm realm;
     private ChatRoom room;
-    private Runnable runnable;
     private Handler handler;
     private String uuid;
     private int status;
@@ -170,7 +169,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
 
     private void updateRoomListUi()
     {
-        runnable = new Runnable()
+        Runnable runnable = new Runnable()
         {
             @Override
             public void run()
@@ -204,7 +203,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
 
     private void updateRoomMessageUi(final int status,final String uuid)
     {
-        runnable = new Runnable()
+         Runnable runnable = new Runnable()
         {
             @Override
             public void run()
