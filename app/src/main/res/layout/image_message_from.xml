@@ -18,7 +18,7 @@
         android:paddingTop="6dp"
        android:text="1:19" />
 
-    android:layout_below="@id/imageMessage"
+
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imageMessage"
         android:layout_width="250dp"
@@ -34,7 +34,8 @@
         fresco:roundedCornerRadius="20dp"
         fresco:roundTopLeft="false"
         fresco:roundingBorderColor="@color/bg_bubble_self"
-        fresco:failureImage="@drawable/default_image"/>
+        fresco:failureImage="@drawable/default_image"
+        android:layout_marginBottom = "20dp"/>
 
 
 
