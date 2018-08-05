@@ -47,12 +47,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     private String phoneNumber,message,time;
     private boolean isInChatRoom;
     private boolean isInbackground;
+    private boolean isLogin;
+    private boolean isFirstRun;
     String myPhoneNumber ;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage)
     {
          myPhoneNumber = Preferences.getMyPhoneNumber(getBaseContext());
+         isLogin = Preferences.isLogin(getBaseContext());
+        isLogin = Preferences.isFirstRun(getBaseContext());
         try
         {
             realm = Realm.getDefaultInstance();
@@ -75,7 +79,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 updateMessage(obj,status,message);
             }
 
-            if(!isInbackground)
+            if(!isInbackground && isLogin)
             {
                 if(!isInChatRoom)
                 {
@@ -95,7 +99,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 }
 
             }
-            else
+            else if(isLogin && !isFirstRun)
             {
                 sendFullNotification(remoteMessage);
             }
