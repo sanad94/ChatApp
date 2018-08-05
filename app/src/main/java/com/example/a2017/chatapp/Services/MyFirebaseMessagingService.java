@@ -24,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import java.util.ArrayList;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -49,6 +50,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     private boolean isLogin;
     private boolean isFirstRun;
     String myPhoneNumber ;
+    public static final String ACTION ="com.example.a2017.chatapp.services.MyFirebaseMessagingService";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage)
@@ -203,49 +205,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
 
     private void updateRoomMessageUi(final int status,final String uuid)
     {
-         Runnable runnable = new Runnable()
+        boolean isInserted = false;
+
+        if(status == Messages.TOSERVER)
         {
-            @Override
-            public void run()
-            {
-                Realm realm = Realm.getDefaultInstance();
-                realm.executeTransaction(new Realm.Transaction()
-                {
-                    @Override
-                    public void execute(Realm realm)
-                    {
-                        RealmQuery<ChatRoom> chatRoomRealmQuery = realm.where(ChatRoom.class);
-                        ChatRoom room= chatRoomRealmQuery.equalTo("phoneNumber",phoneNumber).findFirst();
-                        ArrayList<Messages> messagesArrayList =new ArrayList<>(room.getMessages());
-                        MessagesAdapter messagesAdapter =MessagesFragment.messagesAdapter;
-                        messagesAdapter.setMessages(messagesArrayList);
-                        Messages obj ;
-                        int position = 0 ;
-                        for (int i = messagesArrayList.size()-1 ; i >=0 ; i--)
-                        {
-                            if(messagesArrayList.get(i).getFromPhoneNumber().equals(myPhoneNumber))
-                            {
-                                obj = messagesArrayList.get(i);
-                                position = i;
-                            }
-                        }
-                        if(status == Messages.TOSERVER)
-                            messagesAdapter.notifyItemInserted(messagesArrayList.size()-1);
-                        else
-                        {
-                           // MessagesFragment.recyclerView_message_list.removeViewAt(position);
-                           // messagesAdapter.notifyItemRemoved(position);
-                            //messagesAdapter.notifyItemInserted(position);
-                            messagesAdapter.notifyItemRangeChanged(position, messagesArrayList.size());
-                            //messagesAdapter.notifyItemRangeChanged(0,messagesArrayList.size()-1);
-                        }
-                        MessagesFragment.recyclerView_message_list.scrollToPosition(messagesArrayList.size()-1);
-                    }
-                });
-            }
-        };
-        handler = new Handler(Looper.getMainLooper());
-        handler.post(runnable);
+            isInserted = true;
+        }
+        Intent intentValue = new Intent(ACTION);
+        intentValue.putExtra("isInserted",isInserted);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intentValue);
     }
 
     private void updateMessage(final Messages message, final int status ,final String msg)

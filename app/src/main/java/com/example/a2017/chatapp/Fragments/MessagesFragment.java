@@ -2,7 +2,10 @@ package com.example.a2017.chatapp.Fragments;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
@@ -13,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +44,7 @@ import com.example.a2017.chatapp.Network.ApiClientRetrofit;
 import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
 import com.example.a2017.chatapp.RecyclerTools.WrapContentLinearLayoutManager;
 import com.example.a2017.chatapp.Services.ImageService;
+import com.example.a2017.chatapp.Services.MyFirebaseMessagingService;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.example.a2017.chatapp.Utils.UiHandler;
 import com.google.gson.Gson;
@@ -112,6 +117,15 @@ public class MessagesFragment extends Fragment
         super.onStart();
         Preferences.setIsInChatRoom(true,getContext());
         getFromRealm();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter(MyFirebaseMessagingService.ACTION);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver,intentFilter);
+
     }
 
     @Override
@@ -234,6 +248,42 @@ public class MessagesFragment extends Fragment
             recyclerView_message_list.scrollToPosition(messages.size()-1);
         }
     }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+             final boolean isInserted = intent.getExtras().getBoolean("isInserted");
+                realm.executeTransaction(new Realm.Transaction()
+                {
+                    @Override
+                    public void execute(Realm realm)
+                    {
+                        RealmQuery<ChatRoom> chatRoomRealmQuery = realm.where(ChatRoom.class);
+                        room = chatRoomRealmQuery.equalTo("phoneNumber",fromPhoneNumber).findFirst();
+                        if(room==null)
+                        {
+                            return;
+                        }
+                        messages=new ArrayList<>(room.getMessages());
+                        myLastMessage = getMyLastMessage(messages);
+                        messagesAdapter.setMessages(messages);
+                        if(isInserted)
+                        {
+                            messagesAdapter.notifyItemInserted(messages.size()-1);
+
+                        }
+                        else
+                        {
+                            messagesAdapter.notifyItemChanged(messages.size()-1);
+                        }
+                        recyclerView_message_list.scrollToPosition(messages.size()-1);
+                    }
+                });
+            }
+
+    };
 
     private void configureRecyclerView()
     {
