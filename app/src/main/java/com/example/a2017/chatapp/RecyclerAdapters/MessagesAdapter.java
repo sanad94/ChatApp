@@ -181,7 +181,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
      else
      {
          isMeflag = false;
-         if(messages.get(position).getMessage().contains("ImageMessage:"))
+                 if(messages.get(position).getMessage().contains("ImageMessage:"))
          {
              return imageMessage;
          }

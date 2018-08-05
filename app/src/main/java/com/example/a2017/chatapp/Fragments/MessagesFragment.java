@@ -38,6 +38,7 @@ import com.example.a2017.chatapp.R;
 import com.example.a2017.chatapp.RecyclerAdapters.MessagesAdapter;
 import com.example.a2017.chatapp.Network.ApiClientRetrofit;
 import com.example.a2017.chatapp.Network.ApiInterfaceRetrofit;
+import com.example.a2017.chatapp.RecyclerTools.WrapContentLinearLayoutManager;
 import com.example.a2017.chatapp.Services.ImageService;
 import com.example.a2017.chatapp.Utils.Preferences;
 import com.example.a2017.chatapp.Utils.UiHandler;
@@ -236,7 +237,7 @@ public class MessagesFragment extends Fragment
 
     private void configureRecyclerView()
     {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new WrapContentLinearLayoutManager(getContext());
         layoutManager.setStackFromEnd(true);
         messages = new ArrayList<>();
         messagesAdapter = new MessagesAdapter(messages,myPhoneNumber,fromPhoneNumber);
@@ -267,9 +268,10 @@ public class MessagesFragment extends Fragment
                     final Messages messageToSave = new Messages(tempMessage,time,true,myPhoneNumber,uuid.toString(),Messages.TOSERVER);
                     final MessageOverNetwork messageToSend = new MessageOverNetwork(myPhoneNumber,fromPhoneNumber,time,tempMessage,uuid.toString(),MessageOverNetwork.TOSERVER);
                     messages.add(messageToSave);
+                    recyclerView_message_list.getRecycledViewPool().clear();
                     messagesAdapter.setMessages(messages);
                     messagesAdapter.setMyLastMessage(messageToSave);
-                    messagesAdapter.notifyItemInserted(messages.size());
+                    messagesAdapter.notifyItemInserted(messages.size()-1);
                     messageEditText.setText("");
                     saveToRelm(messageToSave);
                     sendMessageToserver(messageToSend);
