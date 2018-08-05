@@ -276,7 +276,7 @@ public class MessagesFragment extends Fragment
                         }
                         else
                         {
-                            messagesAdapter.notifyItemChanged(messages.size()-1);
+                            messagesAdapter.notifyDataSetChanged();
                         }
                         recyclerView_message_list.scrollToPosition(messages.size()-1);
                     }

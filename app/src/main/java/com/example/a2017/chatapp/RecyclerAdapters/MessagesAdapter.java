@@ -242,6 +242,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         if(message.getUuid().equals(myLastMessage.getUuid()))
         {
+            if(holder.status == null)
+                return;
             if(holder.status.getVisibility() == View.INVISIBLE)
             {
                 holder.status.setVisibility(View.VISIBLE);
