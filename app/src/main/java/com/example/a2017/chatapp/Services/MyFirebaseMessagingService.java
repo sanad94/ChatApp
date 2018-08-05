@@ -223,9 +223,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
             @Override
             public void execute(Realm realm)
             {
-                message.setStatus(status);
-                message.setMessage(msg);
-                realm.copyToRealmOrUpdate(message);
+                final Messages messageToSave = new Messages(message.getMessage(),message.getTime(),message.isRead(),message.getFromPhoneNumber(),message.getUuid(),status);
+                realm.copyToRealmOrUpdate(messageToSave);
             }
         });
     }
