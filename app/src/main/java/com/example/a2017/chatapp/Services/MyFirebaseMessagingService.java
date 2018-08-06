@@ -80,7 +80,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 updateMessage(obj,status,message);
             }
 
-            if(!isInbackground && isLogin)
+            if(!isInbackground)
             {
                 if(!isInChatRoom)
                 {
