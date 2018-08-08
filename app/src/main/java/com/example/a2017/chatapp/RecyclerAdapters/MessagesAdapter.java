@@ -148,15 +148,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         }
         else
         {
+            if(holder.message==null)
+                return;
             holder.message.setText(message.getMessage().replace("TextMessage:",""));
         }
-        boolean x = false;
-        if(position == 0)
-        {
-            x = hasObservers();
-        }
         updateMessageStatus(holder,message);
-
+        holder.setIsRecyclable(false);
     }
 
     @Override
